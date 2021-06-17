@@ -7,8 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'file:///C:/Users/eceha/IdeaProjects/petsitter_2/lib/main.dart';
+import 'package:se380_unique/PetHire.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

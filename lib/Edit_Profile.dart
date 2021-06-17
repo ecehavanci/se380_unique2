@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'comment_page.dart';
 //import 'package:image_picker/image_picker.dart';
-
+//Sıla was here
 class Editable extends StatefulWidget {
   Editable({Key key}) : super(key: key);
 
