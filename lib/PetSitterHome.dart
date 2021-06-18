@@ -5,8 +5,9 @@ import 'comment_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -40,6 +41,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   String days;
   String shifts;
   int requestCounter;
@@ -47,9 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference PetSittersdoc = FirebaseFirestore.instance.collection('PetSitters');
-    var readSitter=PetSittersdoc.doc("Sitters").get();
-    readSitter.toString();
 
     return Scaffold(
       appBar: AppBar(
