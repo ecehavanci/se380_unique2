@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'Edit_Profile.dart';
 import 'RequestPage.dart';
 import 'comment_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  // This widget is the root of your application.ü
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,6 +21,12 @@ class MyApp extends StatelessWidget {
       ),
       home: MyHomePage(title: 'Pet Sitter Home Page'),
     );
+    /*return MaterialApp(
+      theme: ThemeData(
+        primarySwatch: Colors.orange,
+      ),
+      home: MyHomePage(title: 'Pet Sitter Home Page'),
+    );*/
   }
 }
 
@@ -32,8 +44,13 @@ class _MyHomePageState extends State<MyHomePage> {
   String shifts;
   int requestCounter;
 
+
   @override
   Widget build(BuildContext context) {
+    CollectionReference PetSittersdoc = FirebaseFirestore.instance.collection('PetSitters');
+    var readSitter=PetSittersdoc.doc("Sitters").get();
+    readSitter.toString();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
