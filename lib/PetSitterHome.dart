@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
   MyApp({Key key, this.userID}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -47,6 +48,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
+    getInfoFromFirebase();
     super.initState();
   }
 
@@ -59,17 +61,17 @@ class _MyHomePageState extends State<MyHomePage> {
   String phone;
 
 
-
   void getInfoFromFirebase() async{
-    DocumentReference doc= FirebaseFirestore.instance.collection("PetSitters").doc("Sitters");
+    DocumentReference doc= FirebaseFirestore.instance.collection("PetSitters").doc(widget.ID);
     DocumentSnapshot docSitters = await doc.get();
     Map<String, dynamic> dataSitters=docSitters.data();
+    print(dataSitters["name"]+" "+dataSitters["surname"]+" "+dataSitters["e-mail"]+" "+dataSitters["phone"]);
 
     setState(() {
-      name=dataSitters["name"].toString();
-      surname=dataSitters["Surname"].toString();
-      email=dataSitters["e-mail"].toString();
-      phone=dataSitters["phone"].toString();
+      name=dataSitters["name"];
+      surname=dataSitters["surname"];
+      email=dataSitters["e-mail"];
+      phone=dataSitters["phone"];
 
     });
 
@@ -321,7 +323,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             onPressed: () async {
                               var days = await Navigator.of(context)
                                   .push(MaterialPageRoute(builder: (context) {
-                                return Editable();
+                                return Editable(docID: widget.ID);
                               }));
                               setState(() {
                                 this.days = days[0];

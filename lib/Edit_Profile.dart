@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'comment_page.dart';
 //import 'package:image_picker/image_picker.dart';
 //Sıla was here
 class Editable extends StatefulWidget {
-  Editable({Key key}) : super(key: key);
+  var docID;
+
+  Editable({this.docID,Key key}) : super(key: key);
 
   @override
   _EditableState createState() => _EditableState();
@@ -42,8 +45,22 @@ class _EditableState extends State<Editable> {
     "Sunday": false,
   };
 
+  TextEditingController nameController = new TextEditingController();
+  TextEditingController mailController = new TextEditingController();
+  TextEditingController surnameController = new TextEditingController();
+  TextEditingController passwordController = new TextEditingController();
+  TextEditingController phoneController = new TextEditingController();
+  TextEditingController addressController = new TextEditingController();
+
+
+
   @override
   Widget build(BuildContext context) {
+     var inst= FirebaseFirestore.instance.collection("PetSitters");
+     DocumentReference doc=inst.doc(widget.docID);
+
+
+
     return Scaffold(
         appBar: AppBar(
             backgroundColor: Colors.orange,
@@ -85,11 +102,12 @@ class _EditableState extends State<Editable> {
                 ),
                 Column(
                   children: [
-                    buildTextField("Enter Name", "Name", 1, false),
-                    buildTextField("Enter Surname", "Surname", 1, false),
-                    buildTextField("Enter e-mail", "Email", 2, false),
-                    buildTextField(
-                        "Enter new password", "New Password", 0, true),
+                    buildTextField("Enter Name", "Name", 1, false,nameController),
+                    buildTextField("Enter Surname", "Surname", 1, false,surnameController),
+                    buildTextField("Enter e-mail", "Email", 2, false,mailController),
+                    buildTextField("Enter new password", "New Password", 0, true,passwordController),
+                    //buildTextField("Enter new phone", "Phone Number", 3, true,phoneController),
+                    //buildTextField("Enter new address", "Address", 4, true,addressController)
                   ],
                 ),
                 Row(
@@ -148,8 +166,10 @@ class _EditableState extends State<Editable> {
                   onPressed: () {
                     Navigator.of(context)
                         .pop<List<String>>([myDays.toString(), myShiftvalue]);
+                    //inst.add({'shifts':myShiftvalue,'days':myDays});
+                    doc.set({"name": nameController.text,"surname":surnameController.text,"email":mailController.text,"password":passwordController.text,
+                      'shifts':myShiftvalue,'days':myDays,"phone":phoneController});
 
-                    setState(() {});
                   },
                   label: const Text('Submit'),
                   icon: const Icon(Icons.thumb_up),
@@ -159,6 +179,7 @@ class _EditableState extends State<Editable> {
             ),
           ),
         ));
+
   }
 
   TextButton buildTextButton(String day) {
@@ -177,9 +198,11 @@ class _EditableState extends State<Editable> {
   }
 
   TextField buildTextField(
-      String hint, String label, int iconNo, bool showText) {
-    List<IconData> _icons = [Icons.vpn_key, Icons.accessibility, Icons.mail];
+      String hint, String label, int iconNo, bool showText,TextEditingController Controller ) {
+    List<IconData> _icons = [Icons.vpn_key, Icons.accessibility, Icons.mail,Icons.phone_android,Icons.add_location_sharp];
+
     return TextField(
+      controller: Controller,
       obscureText: showText,
       decoration: InputDecoration(
           icon: Icon(_icons[iconNo]),
