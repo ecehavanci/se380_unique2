@@ -114,10 +114,12 @@ class _SignInAsPetSitterState extends State<SignInAsPetSitter> {
                 try{
                   UserCredential uc = await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: email, password: password
-                  );Navigator.of(context).push(MaterialPageRoute(
+                  );
+                  Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
                         return MyApp(userID : this.id);
-                      }));
+                      })
+                  );
 
                 }on FirebaseAuthException catch (exception){
                   if (exception.code=='user-not-found'){
@@ -231,10 +233,12 @@ class _SignInAsPetOwnerState extends State<SignInAsPetOwner> {
                 try{
                   UserCredential uc = await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: email, password: password
-                  );Navigator.of(context).push(MaterialPageRoute(
+                  );
+                  Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
                         return PetOwnerHomePage(ID : this.id);
-                      }));
+                      })
+                  );
 
                 }on FirebaseAuthException catch (exception){
                   if (exception.code=='user-not-found'){
@@ -406,6 +410,13 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
                   phone = int.tryParse(phoneController.text);
                 });
 
+
+
+
+                try{
+                UserCredential uc = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                email: email, password: password
+                );
                 var inst = FirebaseFirestore.instance.collection('PetSitters');
                 inst.add({
                   'name': name,
@@ -415,18 +426,16 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
                   'password':password,
                   'phone': phone
                 });
+
                 final userID = inst.doc().id;
+
                 print('id: ' +userID);
 
-                try{
-                UserCredential uc = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                email: email, password: password
-                );Navigator.of(context).push(MaterialPageRoute(
+                Navigator.of(context).push(MaterialPageRoute(
                     builder: (context){
                       return SignInAsPetSitter(id: userID);
-                    }));
-                print(inst.doc().id);
-
+                    })
+                );
 
                 }on FirebaseAuthException catch (exception) {
                   if (exception.code == 'e-mail-already-in-use') {
@@ -588,26 +597,32 @@ class _SignUpAsPetOwnerState extends State<SignUpAsPetOwner> {
                   password = passwordController.text;
                 });
 
-                var inst = FirebaseFirestore.instance.collection('PetOwners');
-                inst.add({
-                  'name': name,
-                  'surname': surname,
-                  'address': address,
-                  'email': email,
-                  'password':password,
-                });
-                final userID = inst.doc().id;
-                print('pet sitter id: ' +userID);
+
+
+
 
                 try{
                   UserCredential uc = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                       email: email, password: password
                   );
-                  print(inst.doc().id);
+                  var inst = FirebaseFirestore.instance.collection('PetOwners');
+                  inst.add({
+                    'name': name,
+                    'surname': surname,
+                    'address': address,
+                    'email': email,
+                    'password':password,
+                  });
+
+                  final userID = inst.doc().id;
+
+                  print('pet sitter id: ' +userID);
+
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context){
-                        return SignInAsPetSitter(id: userID);
-                      }));
+                        return SignInAsPetOwner(id: userID);
+                      })
+                  );
 
                 }on FirebaseAuthException catch (exception) {
                   if (exception.code == 'e-mail-already-in-use') {

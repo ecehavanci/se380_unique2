@@ -283,6 +283,16 @@ class PetOwner extends StatefulWidget {
 }
 
 class _PetOwnerState extends State<PetOwner> {
+  Future<String> petOwnerName() async{
+    var doc =FirebaseFirestore.instance.collection('PetOwners').
+    doc(widget.userID);
+
+    var docSnap = await doc.get();
+
+    var data = docSnap.data();
+    return data['name'];
+  }
+
    String petName;
    int selectedItemIndex=0;
    //Function onItemTap;
@@ -334,7 +344,7 @@ class _PetOwnerState extends State<PetOwner> {
                 height: 80,
                 child: Container(
                   alignment: Alignment.centerLeft,
-                  child: Text('Name: '+ FirebaseFirestore.instance.doc(widget.userID).path, style: new TextStyle(fontSize: 25, color: const Color(
+                  child: Text('Name: '+ petOwnerName().toString(), style: new TextStyle(fontSize: 25, color: const Color(
                       0xFF550000), fontWeight: FontWeight.bold), ),
                 ),
             ), flex: 2,),
