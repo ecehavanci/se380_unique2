@@ -53,17 +53,37 @@ class _MyHomePageState extends State<MyHomePage> {
   String days;
   String shifts;
   int requestCounter;
+  String name;
+  String surname;
+  String email;
+  String phone;
 
 
+
+  void getInfoFromFirebase() async{
+    DocumentReference doc= FirebaseFirestore.instance.collection("PetSitters").doc("Sitters");
+    DocumentSnapshot docSitters = await doc.get();
+    Map<String, dynamic> dataSitters=docSitters.data();
+
+    setState(() {
+      name=dataSitters["name"].toString();
+      surname=dataSitters["Surname"].toString();
+      email=dataSitters["e-mail"].toString();
+      phone=dataSitters["phone"].toString();
+
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
-
+    getInfoFromFirebase();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
         title: Text(widget.title),
       ),
-      body: Container(
+      body:
+      Container(
         color: Colors.orange[200],
         child: Container(
           child: Column(
@@ -113,23 +133,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Name :",
+                                "Name : ",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 20),
-                              ),
-                              /*
-                              SizedBox(
-                                height: 15,
-                                width: 75,
-                                child: FloatingActionButton(
-                                  onPressed: () {
-
-                                  },
-                                  child: Text('EDIT'),
-
-                                  shape: StadiumBorder(),
-                                ),
-                              )*/
+                              ),Text(name==null?"Not entered":name,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 17),
+                              )
                             ],
                           ),
                           Row(
@@ -139,7 +150,25 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "Surname :",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 20),
-                              ),
+                              ),Text(surname==null?"Not entered":surname,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 17),
+                              )
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Phone Number :",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),Text(phone==null?"Not entered":phone,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 17),
+                              )
                             ],
                           ),
                           Row(
@@ -149,7 +178,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "E-mail :",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 20),
-                              ),
+                              ),Text(email==null?"Not entered":email,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 17),
+                              )
                             ],
                           ),
                           Row(

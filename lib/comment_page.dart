@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -54,6 +55,25 @@ class _RatingsState extends State<Ratings> {
     ];
     var stars = [1, 4, 5, 2, 4, 5, 1, 2, 4, 4];
 
+    String SittersComment;
+    DocumentReference doc= FirebaseFirestore.instance.collection("PetSitters").doc("Sitters").collection("Comments").doc("Comments");
+
+    void getCommentInfoFromFirebase() async{
+      DocumentReference doc= FirebaseFirestore.instance.collection("PetSitters").doc("Sitters").collection("Comments").doc("Comments");
+      DocumentSnapshot docSitters = await doc.get();
+      Map<String, dynamic> dataSitters=docSitters.data();
+      dataSitters["The Comment"];
+      dataSitters["comment_star"];
+
+
+
+      setState(() {
+
+
+      });
+
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
@@ -72,7 +92,7 @@ class _RatingsState extends State<Ratings> {
                   color: Colors.amber,
                   margin: EdgeInsets.all(15),
                 ),
-                DisplayClass(avg_star, 35)
+                StarDisplay(avg_star, 35)
               ],
             ),
             Container(
@@ -92,52 +112,7 @@ class _RatingsState extends State<Ratings> {
             ),
             Expanded(
                 flex: 3,
-                child: Container(
-                  color: Colors.yellow.shade100,
-                  child: ListView.separated(
-                    itemCount: 10,
-                    separatorBuilder: (BuildContext context, _) =>
-                    const Divider(
-                      color: Colors.pink,
-                      thickness: 3,
-                    ),
-                    itemBuilder: (BuildContext context, int index) {
-                      return ListTile(
-                        title: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  ' ${names[index]}',
-                                  style: TextStyle(
-                                      color: Colors.black.withOpacity(1.0)),
-                                  textScaleFactor: 1.2,
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                DisplayClass(stars[index].toDouble(), 5),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                    child: Text(
-                                      '${comments[index]}',
-                                      style: TextStyle(
-                                          color: Colors.black.withOpacity(0.8)),
-                                      textScaleFactor: 1,
-                                    )),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                )),
+                child: CommentsList(names: names, stars: stars, comments: comments)),
             Column(),
             Row(),
           ],
@@ -147,8 +122,71 @@ class _RatingsState extends State<Ratings> {
   }
 }
 
-class DisplayClass extends StatelessWidget {
-  DisplayClass(this.avg, this.size, {Key key}) : super(key: key);
+class CommentsList extends StatelessWidget {
+  const CommentsList({
+    Key key,
+    @required this.names,
+    @required this.stars,
+    @required this.comments,
+  }) : super(key: key);
+
+  final List<String> names;
+  final List<int> stars;
+  final List<String> comments;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.yellow.shade100,
+      child: ListView.separated(
+        itemCount: 10,
+        separatorBuilder: (BuildContext context, _) =>
+        const Divider(
+          color: Colors.pink,
+          thickness: 3,
+        ),
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+            title: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      ' ${names[index]}',
+                      style: TextStyle(
+                          color: Colors.black.withOpacity(1.0)),
+                      textScaleFactor: 1.2,
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    StarDisplay(stars[index].toDouble(), 5),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Text(
+                          '${comments[index]}',
+                          style: TextStyle(
+                              color: Colors.black.withOpacity(0.8)),
+                          textScaleFactor: 1,
+                        )),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class StarDisplay extends StatelessWidget {
+  StarDisplay(this.avg, this.size, {Key key}) : super(key: key);
   final double avg;
 
   final double size;
