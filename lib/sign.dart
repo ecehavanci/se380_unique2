@@ -13,7 +13,7 @@ import 'PetSitterHome.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(SignInAsPetSitter());
+  runApp(SignUpChooser());
 }
 class SignInAsPetSitter extends StatefulWidget {
   const SignInAsPetSitter({Key key, this.onButtonPressed, this.id}) : super(key: key);
@@ -117,6 +117,123 @@ class _SignInAsPetSitterState extends State<SignInAsPetSitter> {
                   );Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
                         return MyApp(userID : this.id);
+                      }));
+
+                }on FirebaseAuthException catch (exception){
+                  if (exception.code=='user-not-found'){
+                    print("wrong email");
+                  }
+                  if(exception.code=='wrong-password'){
+                    print('wrong password');
+                  }
+                }
+              }
+          )
+      ),
+    );
+  }
+}
+
+class SignInAsPetOwner extends StatefulWidget {
+  const SignInAsPetOwner({Key key, this.id}) : super(key: key);
+
+  final String id;
+  @override
+  _SignInAsPetOwnerState createState() => _SignInAsPetOwnerState(id);
+}
+
+class _SignInAsPetOwnerState extends State<SignInAsPetOwner> {
+  String email;
+  String password;
+
+  String emailNotFound = '';
+  String wrongPassword = '';
+
+  final emailController=TextEditingController();
+  final passwordController=TextEditingController();
+  final String id;
+
+  _SignInAsPetOwnerState(this.id);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+          backgroundColor: const Color(0xFFFFEBA2),
+          appBar: AppBar(title: Text('Sign in'), backgroundColor: const Color(
+              0xFFE27320),),
+          body:Builder(
+            builder: (context) => Container(
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                height: 900,
+                width: 350,
+                child: Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: ListView(
+                    children: [
+                      Form(
+
+                          child: TextField(
+                              textInputAction: TextInputAction.next,
+                              controller: emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              style: TextStyle(fontSize: 25),
+                              decoration: InputDecoration(
+                                  hintText: 'Email'
+                              )
+                          )
+                      ),
+
+                      Form(
+
+                          child: TextField(
+                              textInputAction: TextInputAction.done,
+                              keyboardType: TextInputType.visiblePassword,
+                              controller: passwordController,
+                              style: TextStyle(fontSize: 25),
+                              decoration: InputDecoration(
+                                  hintText: 'Password'
+                              )
+                          )
+                      ),
+
+
+                      SizedBox(
+                          height: 300,
+                          child: Row(
+                              children: [
+                                Text('Don\'t you have an account? ', style: TextStyle( fontSize: 20)),
+                                TextButton(onPressed: () {Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context){
+                                      return SignUpChooser();
+                                    }));}, child: Text('Sign up', style: TextStyle(color: Colors.blue, fontSize: 20),))
+                              ]
+                          )
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+
+          floatingActionButton: FloatingActionButton(
+              backgroundColor: Colors.deepOrangeAccent,
+              child: Icon(Icons.check),
+              onPressed: () async {
+                setState(() {
+                  email=emailController.text;
+                  password=passwordController.text;
+                });
+
+                try{
+                  UserCredential uc = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      email: email, password: password
+                  );Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return PetOwnerHomePage(ID : this.id);
                       }));
 
                 }on FirebaseAuthException catch (exception){
@@ -263,7 +380,7 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
                                 Text('Have an account? ', style: TextStyle( fontSize: 20)),
                                 TextButton(onPressed: () {Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context){
-                                      return SignInAsPetSitter();
+                                      return SignInChooser();
                                     }));}, child: Text('Sign in', style: TextStyle(color: Colors.blue, fontSize: 20),))
                               ]
                           )
@@ -286,6 +403,7 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
                   address = addressController.text;
                   email = emailController.text;
                   password = passwordController.text;
+                  phone = int.tryParse(phoneController.text);
                 });
 
                 var inst = FirebaseFirestore.instance.collection('PetSitters');
@@ -445,7 +563,7 @@ class _SignUpAsPetOwnerState extends State<SignUpAsPetOwner> {
                                 Text('Have an account? ', style: TextStyle( fontSize: 20)),
                                 TextButton(onPressed: () {Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context){
-                                      return SignInAsPetSitter();
+                                      return SignInChooser();
                                     }));}, child: Text('Sign in', style: TextStyle(color: Colors.blue, fontSize: 20),))
                               ]
                           )
@@ -580,11 +698,93 @@ class SignUpChooser extends StatelessWidget {
                           0xFF784110)),),
                       TextButton(onPressed: () { Navigator.of(context).push(MaterialPageRoute(
                           builder: (context){
-                            return SignInAsPetSitter();
+                            return SignInChooser();
                           }));},
                       child: Text('Sign in ',style: TextStyle(fontSize: 20, color: Colors.blue),)),
                 ]), flex:4,)
 
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SignInChooser extends StatelessWidget {
+  const SignInChooser({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: const Color(0xFFFFD074),
+        appBar: AppBar(title: Text('Sign up'), backgroundColor: const Color(
+            0xFFFF9E00),),
+        body:Builder(
+          builder: (context) => Center(
+            child:Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(flex: 9,
+                    child: Container(alignment: Alignment.center,child: Text("Welcome Again To \nUNIQUE", style: TextStyle(fontStyle: FontStyle.italic, fontSize: 50, fontWeight: FontWeight.bold, color: Colors.brown), textAlign: TextAlign.center,))
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    child: SizedBox(
+                      height: 50,
+                      width: 220,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: const Color(0xFF71A7FF),
+                          onPrimary: const Color(0xFF235ABA),
+                        ),
+                        onPressed: () { Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context){
+                              return SignInAsPetOwner();
+                            })); },
+                        child: Text('Sign in as pet owner', style: TextStyle(fontSize: 19),),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(child: Text(''), flex:1,),
+
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    child: SizedBox(
+                      height: 50,
+                      width: 220,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: const Color(0xFF71A7FF),
+                          onPrimary: const Color(0xFF235ABA),
+                        ),
+                        onPressed: () { Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context){
+                              return SignInAsPetSitter();
+                            }));},
+                        child: Text('Sign in as pet sitter', style: TextStyle(fontSize: 19),),
+                      ),
+                    ),
+                  ),
+                ),
+
+
+                Expanded(child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Do you have an account? ',style: TextStyle(fontSize: 20, color: Color(
+                          0xFF784110)),),
+                      TextButton(onPressed: () { Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context){
+                            return SignUpChooser();
+                          }));},
+                          child: Text('Sign up ',style: TextStyle(fontSize: 20, color: Colors.blue),)),
+                    ]), flex:4,)
               ],
             ),
           ),
