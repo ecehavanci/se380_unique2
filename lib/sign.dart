@@ -427,7 +427,7 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
                   'phone': phone
                 });
 
-                final userID = inst.doc().id;
+                var userID = inst.doc().id;
 
                 print('id: ' +userID);
 
@@ -473,8 +473,6 @@ class _SignUpAsPetOwnerState extends State<SignUpAsPetOwner> {
 
   String weakPassword;
   String emailInUse;
-
-
 
   final nameController=TextEditingController();
   final surnameController=TextEditingController();
@@ -597,16 +595,14 @@ class _SignUpAsPetOwnerState extends State<SignUpAsPetOwner> {
                   password = passwordController.text;
                 });
 
-
-
-
-
                 try{
                   UserCredential uc = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                       email: email, password: password
                   );
-                  var inst = FirebaseFirestore.instance.collection('PetOwners');
-                  inst.add({
+
+
+                  var inst = FirebaseFirestore.instance.collection('PetOwners').doc(uc.user.uid);
+                  inst.set({
                     'name': name,
                     'surname': surname,
                     'address': address,
@@ -614,9 +610,9 @@ class _SignUpAsPetOwnerState extends State<SignUpAsPetOwner> {
                     'password':password,
                   });
 
-                  final userID = inst.doc().id;
+                  var userID = uc.user.uid;
 
-                  print('pet sitter id: ' +userID);
+                  print('pet owner id: ' +userID);
 
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context){

@@ -278,19 +278,27 @@ class PetOwner extends StatefulWidget {
   final String userID;
   final String title;
 
+
   @override
   _PetOwnerState createState() => _PetOwnerState();
 }
 
 class _PetOwnerState extends State<PetOwner> {
-  Future<String> petOwnerName() async{
+
+  String username = 'undefined';
+  void petOwnerName() async{
     var doc =FirebaseFirestore.instance.collection('PetOwners').
-    doc(widget.userID);
+    doc('6NQKHmeje3xWaPjgrtRf');
 
     var docSnap = await doc.get();
 
     var data = docSnap.data();
-    return data['name'];
+
+    print([data['name']]);
+    setState(() {
+      username =data['name'];
+    });
+    print(username);
   }
 
    String petName;
@@ -344,7 +352,7 @@ class _PetOwnerState extends State<PetOwner> {
                 height: 80,
                 child: Container(
                   alignment: Alignment.centerLeft,
-                  child: Text('Name: '+ petOwnerName().toString(), style: new TextStyle(fontSize: 25, color: const Color(
+                  child: Text('Name: '+ username , style: new TextStyle(fontSize: 25, color: const Color(
                       0xFF550000), fontWeight: FontWeight.bold), ),
                 ),
             ), flex: 2,),
@@ -413,11 +421,24 @@ class _PetOwnerState extends State<PetOwner> {
                       style: ElevatedButton.styleFrom(
                         primary: const Color(0xFF00CE8D),
                         onPrimary: const Color(0xFF004DB4),
-                      ), onPressed: () { /*Navigator.of(context).push(MaterialPageRoute(
+                      ), onPressed: () async{ /*Navigator.of(context).push(MaterialPageRoute(
                         builder: (context){
                           return SignUpChooser();
                         }
-                    )); */},
+                    )); */
+                      var doc =FirebaseFirestore.instance.collection('PetOwners').
+                      doc(widget.userID);
+
+                      var docSnap = await doc.get();
+
+                      var data = docSnap.data();
+
+                      print([data['name']]);
+                      setState(() {
+                        username =data['name'];
+                      });
+                      print(username);
+                    },
                       child: Text('Favourite pet sitters', style: new TextStyle(fontSize:30)),
 
                     ),
