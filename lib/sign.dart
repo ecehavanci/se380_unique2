@@ -15,11 +15,12 @@ Future<void> main() async {
   runApp(SignIn());
 }
 class SignIn extends StatefulWidget {
-  const SignIn({Key key, this.onButtonPressed}) : super(key: key);
+  const SignIn({Key key, this.onButtonPressed, this.id}) : super(key: key);
 
+  final String id;
   final onButtonPressed;
   @override
-  _SignInState createState() => _SignInState(onButtonPressed);
+  _SignInState createState() => _SignInState(onButtonPressed, id);
 }
 
 class _SignInState extends State<SignIn> {
@@ -32,8 +33,9 @@ class _SignInState extends State<SignIn> {
   final emailController=TextEditingController();
   final passwordController=TextEditingController();
   final Function onButtonPressed;
+  final String id;
 
-  _SignInState(this.onButtonPressed);
+  _SignInState(this.onButtonPressed, this.id);
 
   @override
   Widget build(BuildContext context) {
@@ -113,25 +115,19 @@ class _SignInState extends State<SignIn> {
                 try{
                   UserCredential uc = await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: email, password: password
-                  );
+                  );Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return MyApp(userID : this.id);
+                      }));
+
                 }on FirebaseAuthException catch (exception){
                   if (exception.code=='user-not-found'){
-                    setState(() {
-                      emailNotFound = 'Wrong email';
-                    });
+                    print("wrong email");
                   }
                   if(exception.code=='wrong-password'){
-                    setState(() {
-                      wrongPassword = 'Wrong Password';
-                    });
+                    print('wrong password');
                   }
-
-                  /*if(emailNotFound == '' && wrongPassword == ''){Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context){
-                        return SignUpChooser();
-                      }));
-                  }*/
-
+                }finally{
 
                 }
               }
@@ -278,10 +274,21 @@ class _SignUpState extends State<SignUpAsPetSitter> {
                   password = passwordController.text;
                 });
 
+                var inst = FirebaseFirestore.instance.collection('PetSitters');
+                inst.add({'name': name, 'Surname': surname, 'address': address, 'email':email, 'password':password});
+                final userID = inst.doc().id;
+                print('id: ' +userID);
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context){
+                      return SignIn(id: userID);
+                    }));
                 try{
                 UserCredential uc = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                 email: email, password: password
                 );
+                print(inst.doc().id);
+
+
                 }on FirebaseAuthException catch (exception) {
                   if (exception.code == 'e-mail-already-in-use') {
                     print('exists');
