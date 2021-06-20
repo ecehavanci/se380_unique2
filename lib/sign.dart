@@ -417,20 +417,18 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
                 UserCredential uc = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                 email: email, password: password
                 );
-                var inst = FirebaseFirestore.instance.collection('PetSitters');
-                inst.add({
+                var inst = FirebaseFirestore.instance.collection('PetSitters').doc(uc.user.uid);
+                inst.set({
                   'name': name,
                   'surname': surname,
                   'address': address,
-                  'email':email,
+                  'email': email,
                   'password':password,
-                  'phone': phone
                 });
 
-                var userID = inst.doc().id;
+                var userID = uc.user.uid;
 
-                print('id: ' +userID);
-
+                print('pet owner id: ' +userID);
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context){
                       return SignInAsPetSitter(id: userID);

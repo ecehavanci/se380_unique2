@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class Ratings extends StatefulWidget {
-  const Ratings({Key key}) : super(key: key);
+  var ID;
+
+   Ratings({this.ID,Key key}) : super(key: key);
 
   @override
   _RatingsState createState() => _RatingsState();
@@ -56,21 +58,17 @@ class _RatingsState extends State<Ratings> {
     var stars = [1, 4, 5, 2, 4, 5, 1, 2, 4, 4];
 
     String SittersComment;
-    DocumentReference doc= FirebaseFirestore.instance.collection("PetSitters").doc("Sitters").collection("Comments").doc("Comments");
 
     void getCommentInfoFromFirebase() async{
-      DocumentReference doc= FirebaseFirestore.instance.collection("PetSitters").doc("Sitters").collection("Comments").doc("Comments");
-      DocumentSnapshot docSitters = await doc.get();
+      final doc= FirebaseFirestore.instance.collection("PetSitters").doc(widget.ID).collection("comments").snapshots();//get all document ids and print comments
+
+      /*DocumentSnapshot docSitters = await doc.get();
       Map<String, dynamic> dataSitters=docSitters.data();
       dataSitters["The Comment"];
       dataSitters["comment_star"];
+*/
 
 
-
-      setState(() {
-
-
-      });
 
     }
 
@@ -184,7 +182,40 @@ class CommentsList extends StatelessWidget {
     );
   }
 }
+class UserInformation extends StatefulWidget {
+  @override
+  _UserInformationState createState() => _UserInformationState();
+}
 
+class _UserInformationState extends State<UserInformation> {
+  final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance.collection("PetSitters").doc("NLZrkcuuqHgW4HhoRBQ8DEFF9Xc2").collection("comments").snapshots();
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _usersStream,
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Text('Something went wrong');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Text("Loading");
+        }
+
+        return new ListView(
+          children: snapshot.data.docs.map((DocumentSnapshot document) {
+            Map<String, dynamic> data = document.data();
+            return new ListTile(
+              title: new Text(data['comment']),
+              subtitle: new Text(data['star']),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+}
 class StarDisplay extends StatelessWidget {
   StarDisplay(this.avg, this.size, {Key key}) : super(key: key);
   final double avg;

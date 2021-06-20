@@ -51,15 +51,13 @@ class _EditableState extends State<Editable> {
   TextEditingController passwordController = new TextEditingController();
   TextEditingController phoneController = new TextEditingController();
   TextEditingController addressController = new TextEditingController();
+  TextEditingController priceController = new TextEditingController();
 
 
 
   @override
   Widget build(BuildContext context) {
-     var inst= FirebaseFirestore.instance.collection("PetSitters");
-     DocumentReference doc=inst.doc(widget.docID);
-
-
+    DocumentReference doc= FirebaseFirestore.instance.collection("PetSitters").doc(widget.docID);
 
     return Scaffold(
         appBar: AppBar(
@@ -106,8 +104,9 @@ class _EditableState extends State<Editable> {
                     buildTextField("Enter Surname", "Surname", 1, false,surnameController),
                     buildTextField("Enter e-mail", "Email", 2, false,mailController),
                     buildTextField("Enter new password", "New Password", 0, true,passwordController),
-                    //buildTextField("Enter new phone", "Phone Number", 3, true,phoneController),
-                    //buildTextField("Enter new address", "Address", 4, true,addressController)
+                    buildTextField("Enter new phone", "Phone Number", 3, false,phoneController),
+                    buildTextField("Enter new address", "Address", 4, false,addressController),
+                    buildTextField("Price Per Hour", "Price Per Hour", 5, false,priceController),
                   ],
                 ),
                 Row(
@@ -168,7 +167,7 @@ class _EditableState extends State<Editable> {
                         .pop<List<String>>([myDays.toString(), myShiftvalue]);
                     //inst.add({'shifts':myShiftvalue,'days':myDays});
                     doc.set({"name": nameController.text,"surname":surnameController.text,"email":mailController.text,"password":passwordController.text,
-                      'shifts':myShiftvalue,'days':myDays,"phone":phoneController});
+                      'shifts':myShiftvalue,'days':myDays,"phone":phoneController.text,"price":priceController.text});
 
                   },
                   label: const Text('Submit'),
@@ -199,7 +198,8 @@ class _EditableState extends State<Editable> {
 
   TextField buildTextField(
       String hint, String label, int iconNo, bool showText,TextEditingController Controller ) {
-    List<IconData> _icons = [Icons.vpn_key, Icons.accessibility, Icons.mail,Icons.phone_android,Icons.add_location_sharp];
+    List<IconData> _icons = [Icons.vpn_key, Icons.accessibility, Icons.mail,Icons.phone_android,Icons.add_location_sharp,
+    Icons.monetization_on_outlined];
 
     return TextField(
       controller: Controller,
