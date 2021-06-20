@@ -17,60 +17,14 @@ class _RatingsState extends State<Ratings> {
   Widget build(BuildContext context) {
     int price;
     double avg_star = 4;
-    var names = [
-      "Ayşegül",
-      "fatma",
-      "ali",
-      "veli",
-      "Lilly",
-      "Bella",
-      "Milo",
-      "Heidi",
-      "Fiona",
-      "Layla"
-    ];
-    var states = [
-      "İzmir",
-      "Ankara",
-      "İstanbul",
-      "Manisa",
-      "Bursa",
-      "Kars",
-      "Yalova"
-    ];
-    var wishes = ["Grooming", "Bathe", "Feeding"];
     String bio =
         "A biography is simply an account of someone’s life written by another person."
         " A biography can be short in the case of few sentences biography, and it can also be"
         " long enough to fill an entire book. ";
-    var comments = [
-      "Çok güzel  dfsfkdsfkfdgkdfgkdfsdfsdfdsfdsmfnmsdnmmnsdfsdnmfsdnfsdfmsdmnfsdjdfgkdfjgjdfgjkfdkgjd",
-      "kesinlikle bir efsane",
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ];
-    var stars = [1, 4, 5, 2, 4, 5, 1, 2, 4, 4];
+
 
     String SittersComment;
 
-    void getCommentInfoFromFirebase() async{
-      final doc= FirebaseFirestore.instance.collection("PetSitters").doc(widget.ID).collection("comments").snapshots();//get all document ids and print comments
-
-      /*DocumentSnapshot docSitters = await doc.get();
-      Map<String, dynamic> dataSitters=docSitters.data();
-      dataSitters["The Comment"];
-      dataSitters["comment_star"];
-*/
-
-
-
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -110,7 +64,8 @@ class _RatingsState extends State<Ratings> {
             ),
             Expanded(
                 flex: 3,
-                child: CommentsList(names: names, stars: stars, comments: comments)),
+                child: UserInformation()//CommentsList(names: names, stars: stars, comments: comments)
+            ),
             Column(),
             Row(),
           ],
@@ -182,6 +137,7 @@ class CommentsList extends StatelessWidget {
     );
   }
 }
+
 class UserInformation extends StatefulWidget {
   @override
   _UserInformationState createState() => _UserInformationState();
@@ -192,30 +148,135 @@ class _UserInformationState extends State<UserInformation> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: _usersStream,
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) {
-          return Text('Something went wrong');
-        }
+    return Container(
+        color: Colors.yellow.shade100,
+        child: StreamBuilder<QuerySnapshot>(
+          stream: _usersStream,
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return Text('Something went wrong');
+            }
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("Loading");
-        }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
 
-        return new ListView(
-          children: snapshot.data.docs.map((DocumentSnapshot document) {
-            Map<String, dynamic> data = document.data();
-            return new ListTile(
-              title: new Text(data['comment']),
-              subtitle: new Text(data['star']),
+            return new ListView(
+
+              children: snapshot.data.docs.map((DocumentSnapshot document) {
+                Map<String, dynamic> data = document.data();
+                return new ListTile(
+                  title: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        /*Row(
+                          children: [
+                            Text(
+                              ' ${names[index]}',
+                              style: TextStyle(
+                                  color: Colors.black.withOpacity(1.0)),
+                              textScaleFactor: 1.2,
+                            ),
+                          ],
+                        ),*/
+                        Row(
+                          children: [
+                            StarDisplay(data['star'].toDouble(), 5),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                                child: Text(
+                                  '${data['comment']}',
+                                  style: TextStyle(
+                                      color: Colors.black.withOpacity(0.8)),
+                                  textScaleFactor: 1,
+                                )),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
             );
-          }).toList(),
-        );
-      },
-    );
+          },
+        ),
+      );
   }
 }
+/*
+class UserInformation2222 extends StatefulWidget {
+  @override
+  _UserInformation2222State createState() => _UserInformation2222State();
+}
+
+class _UserInformation2222State extends State<UserInformation2222> {
+  final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance.collection("PetSitters").doc("NLZrkcuuqHgW4HhoRBQ8DEFF9Xc2").collection("comments").snapshots();
+  var data;
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+  Container(
+      child: StreamBuilder<QuerySnapshot>(
+      stream: _usersStream,
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                        return Text('Something went wrong');
+                      }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+                    return ListView.separated(
+                    separatorBuilder: (context, index) => Divider(color: Colors.pink),
+                    itemCount: snapshot.data.size,
+                    itemBuilder: (BuildContext ctx, int index) {
+
+                      /*list=snapshot.data.docs.map((index)=>).toList();
+
+                      snapshot.data.docs.map((DocumentSnapshot document) {
+                         data = document.data();};*/
+
+                    return new ListTile(
+                                    title: Column(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            StarDisplay(data[index]['star'].star.toDouble(), 5),
+                                          ],
+                                        ),
+                                        Row( //${data['comment']
+                                          children: [
+                                            Expanded(
+                                                child: Text(
+                                                  '${data['comment']',
+                                                  style: TextStyle(
+                                                      color: Colors.black.withOpacity(0.8)),
+                                                  textScaleFactor: 1,
+                                                )),
+                                          ],
+                                        ),
+                                      ],
+                                    );}
+                                  );
+
+                    }
+                    );
+                    }
+                    )
+  );
+  }
+}
+*/
+
 class StarDisplay extends StatelessWidget {
   StarDisplay(this.avg, this.size, {Key key}) : super(key: key);
   final double avg;

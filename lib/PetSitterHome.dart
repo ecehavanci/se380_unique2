@@ -388,13 +388,18 @@ class UserInformation extends StatefulWidget {
 }
 
 class _UserInformationState extends State<UserInformation> {
-  final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance.collection("PetSitters").doc("NLZrkcuuqHgW4HhoRBQ8DEFF9Xc2").collection("comments").snapshots(includeMetadataChanges: true);
+  final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance.collection("PetSitters").doc("NLZrkcuuqHgW4HhoRBQ8DEFF9Xc2").collection("comments").snapshots();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        StreamBuilder<QuerySnapshot>(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.orange,
+        title: Text("My Comments And Ratings"),
+      ),
+      body: Container(
+        color: Colors.white,
+        child: StreamBuilder<QuerySnapshot>(
           stream: _usersStream,
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
@@ -402,7 +407,9 @@ class _UserInformationState extends State<UserInformation> {
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text("Loading");
+              return Center(
+                child: CircularProgressIndicator(),
+              );
             }
 
             return new ListView(
@@ -416,7 +423,7 @@ class _UserInformationState extends State<UserInformation> {
             );
           },
         ),
-      ],
+      ),
     );
   }
 }
