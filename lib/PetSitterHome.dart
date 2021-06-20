@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
       name=dataSitters["name"];
       surname=dataSitters["surname"];
       email=dataSitters["email"];
-      phone=dataSitters["phone"];
+      phone=int.tryParse(dataSitters["phone"]);
       address=dataSitters["address"];
       price=dataSitters["price"];
       bio=dataSitters["bio"];
@@ -174,10 +174,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),Expanded(
-                              child: Text(bio==null?"Not entered":bio,
+                              child: Text(bio==null?"Not entered":bio,textAlign: TextAlign.end,
                                 style: TextStyle(
                                     fontWeight: FontWeight.normal,
-                                    fontSize: 17),
+                                    fontSize: 17,),
                               ),
                             )
                           ],
@@ -251,6 +251,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             Expanded(
                               child: Text(
                                 "${days == null ? "Please add your available days!" : days.substring(1, days.length - 1)}",
+                                textAlign: TextAlign.end,
                                 style: TextStyle(
                                     fontWeight: FontWeight.normal,
                                     fontSize: 17),

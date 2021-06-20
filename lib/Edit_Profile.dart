@@ -235,7 +235,6 @@ class _EditableState extends State<Editable> {
         ));
 
   }
-
   TextButton buildTextButton(String day) {
     return TextButton(
         onPressed: () {

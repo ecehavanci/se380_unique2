@@ -14,17 +14,24 @@ class Ratings extends StatefulWidget {
 
 class _RatingsState extends State<Ratings> {
   @override
+
+
+  double avg_star = 4;
+  String bio = "First edit your bio please!";
+  void getInfoFromFirebasee() async{
+    DocumentReference doc= FirebaseFirestore.instance.collection("PetSitters").doc(widget.ID);
+
+    DocumentSnapshot docSitters = await doc.get();
+    Map<String, dynamic> dataSitters=docSitters.data();
+
+    setState(() {
+      bio=dataSitters["bio"];
+
+    });
+
+  }
   Widget build(BuildContext context) {
-    int price;
-    double avg_star = 4;
-    String bio =
-        "A biography is simply an account of someone’s life written by another person."
-        " A biography can be short in the case of few sentences biography, and it can also be"
-        " long enough to fill an entire book. ";
-
-
-    String SittersComment;
-
+    getInfoFromFirebasee();
 
     return Scaffold(
       appBar: AppBar(
