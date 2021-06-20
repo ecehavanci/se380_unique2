@@ -154,8 +154,26 @@ class _PetOwnerState extends State<PetOwner> {
                 height: 80,
                 child: Container(
                   alignment: Alignment.centerLeft,
-                  child: Text('Name: '+ username , style: new TextStyle(fontSize: 25, color: const Color(
-                      0xFF550000), fontWeight: FontWeight.bold), ),
+                  child: Row(
+                    children: [
+                      Text('Name: ', style: new TextStyle(fontSize: 25, color: const Color(
+                        0xFF550000), fontWeight: FontWeight.bold), ),
+
+                      StreamBuilder<DocumentSnapshot>(
+                      stream: FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID).snapshots(),
+                      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                        if (!snapshot.hasData) {
+                          return  Text('Loading...' , style: new TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold));
+                        }
+                        else {
+                          return  Text(snapshot.data['name'].toString(), style: new TextStyle(fontSize: 25, color: const Color(
+                              0xFF86351C), fontWeight: FontWeight.bold));
+                        }
+                      }
+                      )
+
+                      ]
+                  ),
                 ),
             ), flex: 2,),
             Expanded(
@@ -569,9 +587,14 @@ class _PetState extends State<Pet> {
               return AlertDialog(
                 content: Text('Successfully created '+name),
                 actions: [TextButton(onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context)
+                  {
+                    return PetOwnerHomePage(ID: widget.ID);
+                  }
+                  ));
                   //Navigator.of(context).pop<String>(name.toString());
-                  Navigator.pop(context);
+
                   } , child: Text('Okay'))],
               );
             }
@@ -600,27 +623,32 @@ class _PetState extends State<Pet> {
             textDirection: TextDirection.ltr,
             child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance.collection('PetOwners').doc(
-              'the doc').collection('Pets').snapshots(),
+              ID).collection('Pets').snapshots(),
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
               if(!snapshot.hasData){
-                return Text("Press + icon to add a pet");
+                return Container(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white),), alignment: Alignment.topCenter,);
               }
-              return ListView(
-                  padding: const EdgeInsets.all(8),
-                  children: snapshot.data.docs.map((doc) => new ListTile(
-                      title: Text(doc['Name']),
-                      subtitle: Text(
-                          'Age: '+doc['Age'].toString()
-                              +'\n'+
-                              'Species: ' +doc['Species']
-                              +'\n'+
-                              'Breed: '+doc['Breed']
-                              +'\n'+
-                              'Living Area: '+doc['Living Area']
-                              +'\n'+
-                              'Care Routine: '+doc['Care Routine'])
-                  )).toList()
-              );
+              else {
+                return ListView(
+                    padding: const EdgeInsets.all(8),
+                    children: snapshot.data.docs.map((doc) =>
+                        !snapshot.hasError?
+                    new ListTile(
+                        title: Text(doc['Name']),
+                        subtitle: Text(
+                            'Age: ' + doc['Age'].toString()
+                                + '\n' +
+                                'Species: ' + doc['Species']
+                                + '\n' +
+                                'Breed: ' + doc['Breed']
+                                + '\n' +
+                                'Living Area: ' + doc['Living Area']
+                                + '\n' +
+                                'Care Routine: ' + doc['Care Routine'])
+                    ) :
+                    Text('Press + to add a pet')).toList()
+                );
+              }
             }
         )
           )
