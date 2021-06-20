@@ -169,8 +169,60 @@ class _EditableState extends State<Editable> {
                     Navigator.of(context)
                         .pop<List<String>>([myDays.toString(), myShiftvalue]);
                     //inst.add({'shifts':myShiftvalue,'days':myDays});
-                    doc.set({"name": nameController.text,"surname":surnameController.text,"email":mailController.text,"password":passwordController.text,
-                      'shifts':myShiftvalue,'days':myDays,"phone":phoneController.text,"price":priceController.text,"bio":bioController.text});
+                    if(nameController.text!=''){
+                      doc.update({
+                        "name":  nameController.text
+                      });
+                    }
+                    if(surnameController.text!=''){
+                    doc.update({
+                    "surname":  surnameController.text
+                    });
+                    }
+                    if(mailController.text!=''){
+                    doc.update({
+                    "email":  mailController.text
+                    });
+                    }
+                    if(passwordController.text!=''){
+                    doc.update({
+                    "password":  passwordController.text
+                    });
+                    }
+                    if(myShiftvalue!=''){
+                    doc.update({
+                    "shifts": myShiftvalue
+                    });
+                    }
+                    if(int.tryParse(phoneController.text)==0){
+                    doc.update({
+                    "phone":  int.tryParse(phoneController.text)
+                    });
+                    }
+                    if(priceController.text!=''){
+                    doc.update({
+                    "price":  priceController.text
+                    });
+                    }
+                    if(bioController.text!=''){
+                    doc.update({
+                    "bio":  bioController.text
+                    });
+                    }
+                    if(myDays.toString()!=''){
+                    doc.update({
+                    "days": myDays
+                    });
+                    }
+
+                      /*"surname":!(surnameController.text==null)?surnameController.text:{},
+                      "email":!(mailController.text==null)?mailController.text:{},
+                      "password":!(passwordController.text==null)?passwordController.text:{},
+                      'shifts':!(myShiftvalue==null)?myShiftvalue:{},
+                      'days':!(myDays==null)?myDays:{},
+                      "phone":!(phoneController.text==null)?int.tryParse(phoneController.text):{},
+                      "price":!(priceController.text==null)?priceController.text:{},
+                      "bio":!(bioController.text==null)?bioController.text:{}});*/
 
                   },
                   label: const Text('Submit'),

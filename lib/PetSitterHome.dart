@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String name;
   String surname;
   String email;
-  String phone;
+  int phone;
   var price;
   String bio;
 
@@ -190,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               "Phone Number :",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
-                            ),Text(phone==null?"Not entered":phone,
+                            ),Text(phone==null?"Not entered":phone.toString(),
                               style: TextStyle(
                                   fontWeight: FontWeight.normal,
                                   fontSize: 17),
@@ -381,11 +381,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Container(
                         padding: EdgeInsets.all(5),
                         child: FloatingActionButton.extended(
-                          onPressed: () {Navigator.of(context)
+                          onPressed: () {
+
+                            getInfoFromFirebase();
+                            /*Navigator.of(context)
                               .push(MaterialPageRoute(
                               builder: (context) {
                                 return UserInformation();
-                              }));},
+                              }));*/},
                           backgroundColor: Colors.blue[200],
                           label: const Text("Chance Wheel"),
                           icon: const Icon(Icons.celebration),
