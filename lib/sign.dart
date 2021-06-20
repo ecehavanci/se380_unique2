@@ -115,9 +115,10 @@ class _SignInAsPetSitterState extends State<SignInAsPetSitter> {
                   UserCredential uc = await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: email, password: password
                   );
+                  print('ID: '+uc.user.uid);
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
-                        return MyApp(userID : this.id);
+                        return MyApp(userID : uc.user.uid);
                       })
                   );
 
@@ -234,9 +235,11 @@ class _SignInAsPetOwnerState extends State<SignInAsPetOwner> {
                   UserCredential uc = await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: email, password: password
                   );
+
+                  print('ID: '+uc.user.uid);
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
-                        return PetOwnerHomePage(ID : this.id);
+                        return PetOwnerHomePage(ID : uc.user.uid);
                       })
                   );
 
@@ -426,12 +429,10 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
                   'password':password,
                 });
 
-                var userID = uc.user.uid;
 
-                print('pet owner id: ' +userID);
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context){
-                      return SignInAsPetSitter(id: userID);
+                      return SignInAsPetSitter(id: uc.user.uid);
                     })
                 );
 
