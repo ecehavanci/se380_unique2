@@ -12,19 +12,15 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final String userID;
   // This widget is the root of your application.ü
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-
-  MyApp({Key key, this.userID}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: MyHomePage(title: 'Pet Sitter Home Page', ID: userID ),
+      home: MyHomePage(title: 'Pet Sitter Home Page'),
     );
     /*return MaterialApp(
       theme: ThemeData(
@@ -36,9 +32,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title, this.ID}) : super(key: key);
+  MyHomePage({Key key, this.title}) : super(key: key);
 
-  final String ID;
   final String title;
 
   @override
@@ -48,7 +43,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
-    getInfoFromFirebase();
     super.initState();
   }
 
@@ -61,17 +55,17 @@ class _MyHomePageState extends State<MyHomePage> {
   String phone;
 
 
+
   void getInfoFromFirebase() async{
-    DocumentReference doc= FirebaseFirestore.instance.collection("PetSitters").doc(widget.ID);
+    DocumentReference doc= FirebaseFirestore.instance.collection("PetSitters").doc("Sitters");
     DocumentSnapshot docSitters = await doc.get();
     Map<String, dynamic> dataSitters=docSitters.data();
-    print(dataSitters["name"]+" "+dataSitters["surname"]+" "+dataSitters["e-mail"]+" "+dataSitters["phone"]);
 
     setState(() {
-      name=dataSitters["name"];
-      surname=dataSitters["surname"];
-      email=dataSitters["e-mail"];
-      phone=dataSitters["phone"];
+      name=dataSitters["name"].toString();
+      surname=dataSitters["Surname"].toString();
+      email=dataSitters["e-mail"].toString();
+      phone=dataSitters["phone"].toString();
 
     });
 
@@ -323,7 +317,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             onPressed: () async {
                               var days = await Navigator.of(context)
                                   .push(MaterialPageRoute(builder: (context) {
-                                return Editable(docID: widget.ID);
+                                return Editable();
                               }));
                               setState(() {
                                 this.days = days[0];
@@ -340,7 +334,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Container(
                           padding: EdgeInsets.all(5),
                           child: FloatingActionButton.extended(
-                            onPressed: () {print('ID: '+widget.ID);},
+                            onPressed: () {},
                             backgroundColor: Colors.blue[200],
                             label: const Text("Chance Wheel"),
                             icon: const Icon(Icons.celebration),
