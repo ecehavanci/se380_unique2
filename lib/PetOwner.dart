@@ -38,218 +38,17 @@ class LookForPetSitters extends StatelessWidget {
       appBar: AppBar(title: Text('Look For Pet Sitters')),
       body: Container(
         color: Colors.orangeAccent,
-        child: new Directionality(
-          textDirection: TextDirection.rtl,
-          child: ListView(
-            padding: const EdgeInsets.all(8),
-            children: [
-              Container(
-                height:40,
-                color: Colors.orangeAccent[100],
-                child:Center(
-                  child: Text('This will be filled',),
-                )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-              Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),Container(
-                  height:40,
-                  color: Colors.orangeAccent[400],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),Container(
-                  height:40,
-                  color: Colors.orangeAccent[100],
-                  child:Center(
-                    child: Text('This will be filled',),
-                  )
-              ),
-            ],
-          ),
+        child: new StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('PetSitters').snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
+            if(!snapshot.hasData){
+              return Text("No pet sitter");
+    }
+                return ListView(
+                padding: const EdgeInsets.all(8),
+                children: snapshot.data.docs.map((doc) => new ListTile(title: Text(doc['name']+doc['surname']), subtitle: Text(doc['address']))).toList()
+                );
+          }
         )
       ),
     );
@@ -377,7 +176,7 @@ class _PetOwnerState extends State<PetOwner> {
                               ),
                               onPressed: () { Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context){
-                                    return ListingPetsUI(petName: this.petName, petNameCarrier: (name){setState(() {
+                                    return ListingPetsUI(ID: widget.userID, petName: this.petName, petNameCarrier: (name){setState(() {
                                       petName=name;
                                     });} ,);
                                   }
@@ -478,8 +277,9 @@ class _PetOwnerState extends State<PetOwner> {
 }
 
 class Pet extends StatefulWidget {
-  const Pet({Key key}) : super(key: key);
+  const Pet({Key key, this.ID}) : super(key: key);
 
+  final String ID;
   @override
   _PetState createState() => _PetState();
 }
@@ -490,7 +290,7 @@ class _PetState extends State<Pet> {
   String species;
   String breed;
   String livingArea;
-  String dailyRoutine;
+  String careRoutine;
 
   String batheText ='';
   String combText= '';
@@ -508,7 +308,7 @@ class _PetState extends State<Pet> {
   final breedController=TextEditingController();
   final livingAreaController=TextEditingController();
 
-  /*Function dailyRoutineFunction= (bool batheChecked, bool combChecked, bool feedChecked, bool takeForAWalkChecked) => {
+  /*Function careRoutineFunction= (bool batheChecked, bool combChecked, bool feedChecked, bool takeForAWalkChecked) => {
     if (batheChecked) {
     'bathe'
   }
@@ -655,7 +455,7 @@ class _PetState extends State<Pet> {
                             else
                               combText = '';
 
-                            dailyRoutine= batheText+combText+feedText+ walkText;
+                            careRoutine= batheText+combText+feedText+ walkText;
                           });},
                           selected: this.isCombChecked,
                         ),
@@ -677,7 +477,7 @@ class _PetState extends State<Pet> {
                             else
                               batheText = '';
 
-                            dailyRoutine= batheText+combText+feedText+ walkText;
+                            careRoutine= batheText+combText+feedText+ walkText;
                           });},
                           selected: this.isBatheChecked,
                         ),
@@ -706,7 +506,7 @@ class _PetState extends State<Pet> {
                             else
                               feedText = '';
 
-                            dailyRoutine= batheText+combText+feedText+ walkText;
+                            careRoutine= batheText+combText+feedText+ walkText;
                           });},
                           selected: this.isFeedChecked,
                         ),
@@ -727,14 +527,14 @@ class _PetState extends State<Pet> {
                           else
                             walkText = '';
 
-                          dailyRoutine= batheText+combText+feedText+ walkText;
+                          careRoutine= batheText+combText+feedText+ walkText;
                         });},
                         selected: this.isTakeForAWalkChecked,
                       ),
                     ),
                     ]
                   ),
-                  Text(this.dailyRoutine==null?'undefined ': dailyRoutine, textAlign: TextAlign.center, style: TextStyle(fontSize: 20,color: const Color(
+                  Text(this.careRoutine==null?'undefined ': careRoutine, textAlign: TextAlign.center, style: TextStyle(fontSize: 20,color: const Color(
                       0xFF002865), fontWeight: FontWeight.bold), ),
                 ],
               ),
@@ -752,13 +552,22 @@ class _PetState extends State<Pet> {
             breed=breedController.text;
             livingArea=livingAreaController.text;
           });
+
+          var pets = FirebaseFirestore.instance.collection('PetOwners').doc(widget.ID).collection('Pets');
+          pets.add({
+            'Name': this.name,
+            'Age': this.age,
+            'Species': this.species,
+            'Breed': this.breed,
+            'Living Area':this.livingArea,
+            'Care Routine': this.careRoutine
+          });
             showDialog(barrierDismissible: false,context: context, builder: (context){
               return AlertDialog(
                 content: Text('Successfully created '+name),
                 actions: [TextButton(onPressed: () {
                   Navigator.pop(context);
-                  Navigator.of(context).pop<String>(name.toString());
-                  Navigator.pop(context);
+                  //Navigator.of(context).pop<String>(name.toString());
                   } , child: Text('Okay'))],
               );
             }
@@ -771,10 +580,11 @@ class _PetState extends State<Pet> {
   }
 
   class ListingPetsUI extends StatelessWidget {
-    const ListingPetsUI({Key key, this.petNameCarrier(String name), this.petName}) : super(key: key);
+    const ListingPetsUI({Key key, this.petNameCarrier(String name), this.petName, this.ID}) : super(key: key);
 
     final Function petNameCarrier;
   final String petName;
+  final String ID;
 
     @override
     Widget build(BuildContext context){
@@ -782,28 +592,39 @@ class _PetState extends State<Pet> {
         backgroundColor: const Color(0xFF83ECFF),
         appBar: AppBar(title: Text('Pets'), backgroundColor: Colors.blueAccent,),
         body: Container(
-          child: Directionality(
-            textDirection: TextDirection.ltr,
-            child: ListView(
-            children: [
-              SizedBox(
-                child: Column(
-                  children: [
-                  Text(this.petName==null?'Press + icon to add your pet here':this.petName.toString().toUpperCase(), style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),),
-                  Text('Here will be filled with the data from database'),
-                  ]
-        ),
-              ),
-            ]
-            ),
-          )
+            color: Colors.orangeAccent,
+            child: new StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance.collection('PetOwners').doc(
+                    'the doc').collection('Pets').snapshots(),
+                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
+                  if(!snapshot.hasData){
+                    return Text("Press + icon to add a pet");
+                  }
+                  return ListView(
+                      padding: const EdgeInsets.all(8),
+                      children: snapshot.data.docs.map((doc) => new ListTile(
+                          title: Text(doc['Name']),
+                          subtitle: Text(
+                              'Age: '+doc['Age'].toString()
+                                  +'\n'+
+                                  'Species: ' +doc['Species']
+                                  +'\n'+
+                                  'Breed: '+doc['Breed']
+                                  +'\n'+
+                                  'Living Area: '+doc['Living Area']
+                                  +'\n'+
+                                  'Care Routine: '+doc['Care Routine'])
+                      )).toList()
+                  );
+                }
+            )
         ),
         floatingActionButton: FloatingActionButton(
             child: Icon(Icons.add),
             onPressed: () async{
               final result = await Navigator.of(context).push(MaterialPageRoute(
                 builder: (context){
-                  return Pet();
+                  return Pet(ID: ID);
                 }
             ));
               petNameCarrier (result.toString());
