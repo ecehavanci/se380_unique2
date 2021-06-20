@@ -417,9 +417,8 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
                 UserCredential uc = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                 email: email, password: password
                 );
-
-                var doc = FirebaseFirestore.instance.collection('PetSitters').doc(uc.user.uid);
-                doc.set({
+                var inst = FirebaseFirestore.instance.collection('PetSitters');
+                inst.add({
                   'name': name,
                   'surname': surname,
                   'address': address,
@@ -428,7 +427,7 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
                   'phone': phone
                 });
 
-                var userID = doc.id;
+                var userID = inst.doc().id;
 
                 print('id: ' +userID);
 
