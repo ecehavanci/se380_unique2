@@ -52,6 +52,7 @@ class _EditableState extends State<Editable> {
   TextEditingController phoneController = new TextEditingController();
   TextEditingController addressController = new TextEditingController();
   TextEditingController priceController = new TextEditingController();
+  TextEditingController bioController = new TextEditingController();
 
 
 
@@ -102,6 +103,8 @@ class _EditableState extends State<Editable> {
                   children: [
                     buildTextField("Enter Name", "Name", 1, false,nameController),
                     buildTextField("Enter Surname", "Surname", 1, false,surnameController),
+                    Container(height: 80,
+                        child: buildTextField("Enter Your Biography", "Biography", 1, false,bioController)),
                     buildTextField("Enter e-mail", "Email", 2, false,mailController),
                     buildTextField("Enter new password", "New Password", 0, true,passwordController),
                     buildTextField("Enter new phone", "Phone Number", 3, false,phoneController),
@@ -167,7 +170,7 @@ class _EditableState extends State<Editable> {
                         .pop<List<String>>([myDays.toString(), myShiftvalue]);
                     //inst.add({'shifts':myShiftvalue,'days':myDays});
                     doc.set({"name": nameController.text,"surname":surnameController.text,"email":mailController.text,"password":passwordController.text,
-                      'shifts':myShiftvalue,'days':myDays,"phone":phoneController.text,"price":priceController.text});
+                      'shifts':myShiftvalue,'days':myDays,"phone":phoneController.text,"price":priceController.text,"bio":bioController.text});
 
                   },
                   label: const Text('Submit'),

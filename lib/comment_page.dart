@@ -10,7 +10,7 @@ class Ratings extends StatefulWidget {
   @override
   _RatingsState createState() => _RatingsState();
 }
-// ses geliyo mu
+
 
 class _RatingsState extends State<Ratings> {
   @override
@@ -49,16 +49,13 @@ class _RatingsState extends State<Ratings> {
             ),
             Container(
               margin: EdgeInsets.all(5),
-              child: Expanded(
-                flex: 1,
-                child: Container(
-                  child: Column(
-                    children: [
-                      Text(bio,
-                          style: TextStyle(
-                              fontFamily: "Monospace", color: Colors.pink)),
-                    ],
-                  ),
+              child: Container(
+                child: Column(
+                  children: [
+                    Text(bio,
+                        style: TextStyle(
+                            fontFamily: "Monospace", color: Colors.pink)),
+                  ],
                 ),
               ),
             ),
@@ -150,6 +147,8 @@ class _UserInformationState extends State<UserInformation> {
   Widget build(BuildContext context) {
     return Container(
         color: Colors.yellow.shade100,
+        padding:EdgeInsets.only(bottom: 5),
+
         child: StreamBuilder<QuerySnapshot>(
           stream: _usersStream,
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -168,37 +167,42 @@ class _UserInformationState extends State<UserInformation> {
               children: snapshot.data.docs.map((DocumentSnapshot document) {
                 Map<String, dynamic> data = document.data();
                 return new ListTile(
+
                   title: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        /*Row(
-                          children: [
-                            Text(
-                              ' ${names[index]}',
-                              style: TextStyle(
-                                  color: Colors.black.withOpacity(1.0)),
-                              textScaleFactor: 1.2,
-                            ),
-                          ],
-                        ),*/
-                        Row(
-                          children: [
-                            StarDisplay(data['star'].toDouble(), 5),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                                child: Text(
-                                  '${data['comment']}',
-                                  style: TextStyle(
-                                      color: Colors.black.withOpacity(0.8)),
-                                  textScaleFactor: 1,
-                                )),
-                          ],
-                        ),
-                      ],
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      color: Colors.blue[100],
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          /*Row(
+                            children: [
+                              Text(
+                                ' ${names[index]}',
+                                style: TextStyle(
+                                    color: Colors.black.withOpacity(1.0)),
+                                textScaleFactor: 1.2,
+                              ),
+                            ],
+                          ),*/
+                          Row(
+                            children: [
+                              StarDisplay(data['star'].toDouble(), 5),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                  child: Text(
+                                    '${data['comment']}',
+                                    style: TextStyle(
+                                        color: Colors.black.withOpacity(0.8)),
+                                    textScaleFactor: 1,
+                                  )),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -238,49 +242,54 @@ class _UserInformation2222State extends State<UserInformation2222> {
                     separatorBuilder: (context, index) => Divider(color: Colors.pink),
                     itemCount: snapshot.data.size,
                     itemBuilder: (BuildContext ctx, int index) {
+                       var list = snapshot.data.docs.elementAt(index).get("comment");
+                       print(list.toString());
 
-                      /*list=snapshot.data.docs.map((index)=>).toList();
+                      /*list=snapshot.data.docs.map((index)=>).toList();"
 
                       snapshot.data.docs.map((DocumentSnapshot document) {
                          data = document.data();};*/
 
-                    return new ListTile(
-                                    title: Column(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
+                        return new ListTile(
+                                        title: Column(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            StarDisplay(data[index]['star'].star.toDouble(), 5),
+                                            Row(
+                                              children: [
+                                                //StarDisplay(list["star"], 5),
+                                              ],
+                                            ),
+                                            Row( //${data['comment']
+                                              children: [
+                                                Expanded(
+                                                    child: Text(
+                                                      '${data['comment']}'
+                                                      ,
+                                                      style: TextStyle(
+                                                          color: Colors.black.withOpacity(0.8)),
+                                                      textScaleFactor: 1,
+                                                    )
+                                                ),
+                                              ],
+                                            ),
                                           ],
                                         ),
-                                        Row( //${data['comment']
-                                          children: [
-                                            Expanded(
-                                                child: Text(
-                                                  '${data['comment']',
-                                                  style: TextStyle(
-                                                      color: Colors.black.withOpacity(0.8)),
-                                                  textScaleFactor: 1,
-                                                )),
-                                          ],
-                                        ),
-                                      ],
-                                    );}
-                                  );
+                        );
+
 
                     }
                     );
+
                     }
-                    )
+  )
   );
   }
 }
 */
-
 class StarDisplay extends StatelessWidget {
   StarDisplay(this.avg, this.size, {Key key}) : super(key: key);
   final double avg;
-
+//size is always 35!
   final double size;
 
   final fiveStars = Container(

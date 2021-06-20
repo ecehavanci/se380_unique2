@@ -62,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String email;
   String phone;
   var price;
+  String bio;
 
 
 
@@ -78,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
       phone=dataSitters["phone"];
       address=dataSitters["address"];
       price=dataSitters["price"];
+      bio=dataSitters["bio"];
 
     });
 
@@ -164,7 +166,23 @@ class _MyHomePageState extends State<MyHomePage> {
                                   fontSize: 17),
                             )
                           ],
+                        ), Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "My Biography :",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20),
+                            ),Expanded(
+                              child: Text(bio==null?"Not entered":bio,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 17),
+                              ),
+                            )
+                          ],
                         ),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
