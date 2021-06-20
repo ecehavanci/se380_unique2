@@ -164,7 +164,7 @@ class _PetOwnerState extends State<PetOwner> {
         child: Column(
           children: <Widget>[
             Expanded(
-              flex:6,
+              flex:4,
               child: ConstrainedBox(
                 constraints: BoxConstraints.expand(),
                 child: FlatButton(
@@ -179,8 +179,9 @@ class _PetOwnerState extends State<PetOwner> {
                 width:300,
                 height: 80,
                 child: Container(
-                  alignment: Alignment.centerLeft,
+                  alignment: Alignment.bottomLeft,
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text('Name: ', style: new TextStyle(fontSize: 25, color: const Color(
                         0xFF550000), fontWeight: FontWeight.bold), ),
@@ -192,7 +193,7 @@ class _PetOwnerState extends State<PetOwner> {
                           return  Text('Loading...' , style: new TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold));
                         }
                         else {
-                          return  Text(snapshot.data['name'].toString(), style: new TextStyle(fontSize: 25, color: const Color(
+                          return  Text(snapshot.data['name'].toString()+' '+snapshot.data['surname'].toString(), style: new TextStyle(fontSize: 25, color: const Color(
                               0xFF86351C), fontWeight: FontWeight.bold));
                         }
                       }
@@ -209,17 +210,19 @@ class _PetOwnerState extends State<PetOwner> {
                   child: Row(
                       children: [
                         Text('Pets: ',style: new TextStyle(fontSize: 25, color: const Color(0xFF550000),fontWeight: FontWeight.bold ),),
-                        StreamBuilder<QuerySnapshot>(
-                          stream: FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID).collection('Pets').snapshots(),
-                          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                            if (!snapshot.hasData) {
-                              return  Text('Loading...' , style: new TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold));
+                        Flexible(
+                          child: StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID).collection('Pets').snapshots(),
+                            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (!snapshot.hasData) {
+                                return  Text('Loading...' , textAlign:TextAlign.start,style: new TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold));
+                              }
+                              else {
+                                return  Text(snapshot.data.docs.map((doc) =>doc['Name']).toList().join(", ").toString(), style: new TextStyle(fontSize: 25, color: const Color(
+                                    0xFF86351C), fontWeight: FontWeight.bold));
+                              }
                             }
-                            else {
-                              return  Text(snapshot.data.docs.map((doc) =>doc['Name']).toList().join(", ").toString(), style: new TextStyle(fontSize: 25, color: const Color(
-                                  0xFF86351C), fontWeight: FontWeight.bold));
-                            }
-                          }
+                          ),
                         ),
                         SizedBox(
                           width:80,
@@ -242,10 +245,11 @@ class _PetOwnerState extends State<PetOwner> {
                             ),
                           ),
                         ),
-                        Text("")
                   ])
               ), flex: 2,
             ),
+
+
             Expanded(
               flex:2,
               child: Container(
