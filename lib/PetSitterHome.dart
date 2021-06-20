@@ -5,6 +5,7 @@ import 'comment_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+//MyApp seems normal to me
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -12,15 +13,18 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
+  final String userID;
   // This widget is the root of your application.ü
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+
+  MyApp({Key key, this.userID}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: MyHomePage(title: 'Pet Sitter Home Page'),
+      home: MyHomePage(title: 'Pet Sitter Home Page', ID: userID),
     );
     /*return MaterialApp(
       theme: ThemeData(
@@ -32,7 +36,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  final String ID;
+  MyHomePage({Key key, this.title, this.ID}) : super(key: key);
 
   final String title;
 
