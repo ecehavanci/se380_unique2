@@ -427,6 +427,7 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
                   'address': address,
                   'email': email,
                   'password':password,
+                  'phone': phone,
                 });
 
 

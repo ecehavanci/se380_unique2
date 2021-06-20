@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,16 +31,37 @@ class PetOwnerHomePage extends StatelessWidget {
     );
   }
 }
-class LookForPetSitters extends StatelessWidget {
+class LookForPetSitters extends StatefulWidget {
   const LookForPetSitters({Key key}) : super(key: key);
 
+  @override
+  _LookForPetSittersState createState() => _LookForPetSittersState();
+}
+
+class _LookForPetSittersState extends State<LookForPetSitters> {
+  /*bool isOdd=false;
+  Color variate(){
+    if(isOdd){
+      setState(() {
+        isOdd=false;
+      });
+      return Colors.deepOrangeAccent;
+    }
+    else{
+      setState(() {
+        isOdd=true;
+      });
+      return Colors.deepOrange;
+    }
+
+  }*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Look For Pet Sitters')),
       body: Container(
         color: Colors.orangeAccent,
-        child: new Directionality(
+        child: Directionality(
           textDirection: TextDirection.rtl,
           child: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('PetSitters').snapshots(),
@@ -46,9 +69,12 @@ class LookForPetSitters extends StatelessWidget {
             if(!snapshot.hasData){
               return Text("No pet sitter");
             }
-            return ListView(
-                padding: const EdgeInsets.all(8),
-                children: snapshot.data.docs.map((doc) => new ListTile(title: Text(doc['name']+doc['surname']), subtitle: Text(doc['address']))).toList()
+            return Directionality(
+              textDirection: TextDirection.ltr,
+              child: ListView(
+                  padding: const EdgeInsets.all(8),
+                  children: snapshot.data.docs.map((doc) => TextButton(onPressed: (){print('hello');},child: ListTile(tileColor: Colors.deepOrangeAccent,title: Text(doc['name']+' '+doc['surname']), subtitle: Text(doc['address'])))).toList()
+              ),
             );
           }
         )
@@ -87,7 +113,7 @@ class PetOwner extends StatefulWidget {
 
 class _PetOwnerState extends State<PetOwner> {
 
-  String username = 'undefined';
+  /*String username = 'undefined';
   void petOwnerName() async{
     var doc =FirebaseFirestore.instance.collection('PetOwners').
     doc('6NQKHmeje3xWaPjgrtRf');
@@ -101,7 +127,7 @@ class _PetOwnerState extends State<PetOwner> {
       username =data['name'];
     });
     print(username);
-  }
+  }*/
 
    String petName;
    int selectedItemIndex=0;
@@ -183,8 +209,18 @@ class _PetOwnerState extends State<PetOwner> {
                   child: Row(
                       children: [
                         Text('Pets: ',style: new TextStyle(fontSize: 25, color: const Color(0xFF550000),fontWeight: FontWeight.bold ),),
-                        Text(this.petName!=null?this.petName:'',style: new TextStyle(fontSize: 25, color: const Color (
-                            0xFF00429E),fontWeight: FontWeight.bold ),),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID).collection('Pets').snapshots(),
+                          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (!snapshot.hasData) {
+                              return  Text('Loading...' , style: new TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold));
+                            }
+                            else {
+                              return  Text(snapshot.data.docs.map((doc) =>doc['Name']).toList().join(", ").toString(), style: new TextStyle(fontSize: 25, color: const Color(
+                                  0xFF86351C), fontWeight: FontWeight.bold));
+                            }
+                          }
+                        ),
                         SizedBox(
                           width:80,
                           height: 15,
@@ -246,7 +282,7 @@ class _PetOwnerState extends State<PetOwner> {
                           return SignUpChooser();
                         }
                     )); */
-                      var doc =FirebaseFirestore.instance.collection('PetOwners').
+                      /*var doc =FirebaseFirestore.instance.collection('PetOwners').
                       doc(widget.userID);
 
                       var docSnap = await doc.get();
@@ -257,7 +293,7 @@ class _PetOwnerState extends State<PetOwner> {
                       setState(() {
                         username =data['name'];
                       });
-                      print(username);
+                      print(username);*/
                     },
                       child: Text('Favourite pet sitters', style: new TextStyle(fontSize:30)),
 
