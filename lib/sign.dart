@@ -115,9 +115,10 @@ class _SignInAsPetSitterState extends State<SignInAsPetSitter> {
                   UserCredential uc = await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: email, password: password
                   );
+                  print('ID: '+uc.user.uid);
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
-                        return MyApp(userID : this.id);
+                        return MyApp(userID : uc.user.uid);
                       })
                   );
 
@@ -234,9 +235,11 @@ class _SignInAsPetOwnerState extends State<SignInAsPetOwner> {
                   UserCredential uc = await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: email, password: password
                   );
+
+                  print('ID: '+uc.user.uid);
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
-                        return PetOwnerHomePage(ID : this.id);
+                        return PetOwnerHomePage(ID : uc.user.uid);
                       })
                   );
 
@@ -417,8 +420,8 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
                 UserCredential uc = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                 email: email, password: password
                 );
-                var inst = FirebaseFirestore.instance.collection('PetSitters');
-                inst.add({
+                var inst = FirebaseFirestore.instance.collection('PetSitters').doc(uc.user.uid);
+                inst.set({
                   'name': name,
                   'surname': surname,
                   'address': address,
@@ -427,13 +430,11 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
                   'phone': phone
                 });
 
-                var userID = inst.doc().id;
-
-                print('id: ' +userID);
+                print('id: ' +uc.user.uid);
 
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context){
-                      return SignInAsPetSitter(id: userID);
+                      return SignInAsPetSitter(id: uc.user.uid);
                     })
                 );
 
