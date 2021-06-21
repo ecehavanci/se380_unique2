@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
       name=dataSitters["name"];
       surname=dataSitters["surname"];
       email=dataSitters["email"];
-      phone=int.tryParse(dataSitters["phone"]);
+      phone=dataSitters["phone"];
       address=dataSitters["address"];
       price=dataSitters["price"];
       bio=dataSitters["bio"];
@@ -190,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               "Phone Number :",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
-                            ),Text(phone==null?"Not entered":phone.toString(),
+                            ),Text(phone==0?"Not entered":phone.toString(),
                               style: TextStyle(
                                   fontWeight: FontWeight.normal,
                                   fontSize: 17),
