@@ -40,7 +40,7 @@ class _RequestState extends State<Request> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                      child: Text("my name is..fhgfdghfgdfjgfdgkhdhkgdf.")),
+                      child: Text("This will be filled with pet owner's data")),
                   SizedBox(
                     width: 90,
                     height: 30,
