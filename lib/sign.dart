@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,10 +14,16 @@ import 'PetSitterHome.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(SignUpChooser());
+
+  WidgetsFlutterBinding.ensureInitialized();
+  final cameras = await availableCameras();
+  final firstCamera = cameras.first;
+
+  runApp(SignUpChooser(camera:firstCamera));
 }
 class SignInAsPetSitter extends StatefulWidget {
-  const SignInAsPetSitter({Key key, this.onButtonPressed, this.id}) : super(key: key);
+  final CameraDescription camera;
+  const SignInAsPetSitter({Key key, this.onButtonPressed, this.id, this.camera}) : super(key: key);
 
   final String id;
   final onButtonPressed;
@@ -37,6 +44,9 @@ class _SignInAsPetSitterState extends State<SignInAsPetSitter> {
   final String id;
 
   _SignInAsPetSitterState(this.onButtonPressed, this.id);
+
+  get firstCamera => widget.camera;
+
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +128,7 @@ class _SignInAsPetSitterState extends State<SignInAsPetSitter> {
                   print('ID: '+uc.user.uid);
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
-                        return MyApp(userID : uc.user.uid);
+                        return MyApp(userID : uc.user.uid,camera: firstCamera);
                       })
                   );
 
@@ -641,7 +651,10 @@ class _SignUpAsPetOwnerState extends State<SignUpAsPetOwner> {
 
 
 class SignUpChooser extends StatelessWidget {
-  const SignUpChooser({Key key}) : super(key: key);
+  final CameraDescription camera;
+  const SignUpChooser({Key key, this.camera}) : super(key: key);
+
+  get firstCamera => camera;
 
   @override
   Widget build(BuildContext context) {
@@ -709,7 +722,7 @@ class SignUpChooser extends StatelessWidget {
                           0xFF784110)),),
                       TextButton(onPressed: () { Navigator.of(context).push(MaterialPageRoute(
                           builder: (context){
-                            return SignInChooser();
+                            return SignInChooser(camera: firstCamera);
                           }));},
                       child: Text('Sign in ',style: TextStyle(fontSize: 20, color: Colors.blue),)),
                 ]), flex:4,)
@@ -724,7 +737,10 @@ class SignUpChooser extends StatelessWidget {
 }
 
 class SignInChooser extends StatelessWidget {
-  const SignInChooser({Key key}) : super(key: key);
+  final CameraDescription camera;
+  const SignInChooser({Key key,this.camera}) : super(key: key);
+
+  get firstCamera => camera;
 
   @override
   Widget build(BuildContext context) {
@@ -754,7 +770,7 @@ class SignInChooser extends StatelessWidget {
                         ),
                         onPressed: () { Navigator.of(context).push(MaterialPageRoute(
                             builder: (context){
-                              return SignInAsPetOwner();
+                              return SignInAsPetOwner(/*camera: firstCamera*/);
                             })); },
                         child: Text('Sign in as pet owner', style: TextStyle(fontSize: 19),),
                       ),
@@ -776,7 +792,8 @@ class SignInChooser extends StatelessWidget {
                         ),
                         onPressed: () { Navigator.of(context).push(MaterialPageRoute(
                             builder: (context){
-                              return SignInAsPetSitter();
+                              return SignInAsPetSitter(camera: firstCamera);
+                              //Just add camera: firstCamera as parameter in here
                             }));},
                         child: Text('Sign in as pet sitter', style: TextStyle(fontSize: 19),),
                       ),

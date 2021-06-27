@@ -1,12 +1,17 @@
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:se380_unique/camera.dart';
 import 'comment_page.dart';
-//import 'package:image_picker/image_picker.dart';
-//Sıla was here
+import 'dart:async';
+import 'dart:io';
+
 class Editable extends StatefulWidget {
   var docID;
+  final CameraDescription camera;
+  final String imagePath;
 
-  Editable({this.docID,Key key}) : super(key: key);
+  Editable({this.docID,Key key,this.camera,this.imagePath}) : super(key: key);
 
   @override
   _EditableState createState() => _EditableState();
@@ -83,17 +88,24 @@ class _EditableState extends State<Editable> {
                       height: 175,
                       color: Colors.amber,
                       margin: EdgeInsets.all(5),
-                    ),
+                      child: widget.imagePath==null?Text("You don't have any image"):Container(
+                          height: 160,
+                          width: 160,
+                          child: Image.file(new File(widget.imagePath)))),
                     Positioned(
                       right: 5,
                       bottom: 5,
-                      child: SizedBox(
+                      child: Container(
                           height: 45,
                           width: 60,
                           child: IconButton(
                             icon: const Icon(Icons.camera_alt_outlined),
                             onPressed: () async {
-                              setState(() {});
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                  builder: (context) {
+                                    return TakePictureScreen(camera: widget.camera);
+                                  }));
                             },
                           )),
                     )
@@ -214,6 +226,7 @@ class _EditableState extends State<Editable> {
                     "days": myDays
                     });
                     }
+
 
                       /*"surname":!(surnameController.text==null)?surnameController.text:{},
                       "email":!(mailController.text==null)?mailController.text:{},

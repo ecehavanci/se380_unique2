@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'Edit_Profile.dart';
@@ -15,8 +16,10 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   final String userID;
+  final CameraDescription camera;
 
-  MyApp({Key key, this.userID}) : super(key: key);
+  MyApp({Key key, this.userID,this.camera}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     print(userID);
@@ -24,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: MyHomePage(title: 'Pet Sitter Home Page', ID: userID),
+      home: MyHomePage(title: 'Pet Sitter Home Page', ID: userID,camera:camera),
     );
     /*return MaterialApp(
       theme: ThemeData(
@@ -37,7 +40,8 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   final String ID;
-  MyHomePage({Key key, this.title, this.ID}) : super(key: key);
+  final CameraDescription camera;
+  MyHomePage({Key key, this.title, this.ID,this.camera}) : super(key: key);
 
   final String title;
 
@@ -365,7 +369,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           onPressed: () async {
                             var days = await Navigator.of(context)
                                 .push(MaterialPageRoute(builder: (context) {
-                              return Editable(docID:widget.ID);
+                              return Editable(docID:widget.ID,camera: widget.camera);
                             }));
                             setState(() {
                               this.days = days[0];
