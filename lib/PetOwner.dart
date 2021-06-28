@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 class PetOwnerHomePage extends StatelessWidget {
@@ -31,58 +32,8 @@ class PetOwnerHomePage extends StatelessWidget {
     );
   }
 }
-class LookForPetSitters extends StatefulWidget {
-  const LookForPetSitters({Key key}) : super(key: key);
 
-  @override
-  _LookForPetSittersState createState() => _LookForPetSittersState();
-}
 
-class _LookForPetSittersState extends State<LookForPetSitters> {
-  /*bool isOdd=false;
-  Color variate(){
-    if(isOdd){
-      setState(() {
-        isOdd=false;
-      });
-      return Colors.deepOrangeAccent;
-    }
-    else{
-      setState(() {
-        isOdd=true;
-      });
-      return Colors.deepOrange;
-    }
-
-  }*/
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Look For Pet Sitters')),
-      body: Container(
-        color: Colors.orangeAccent,
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('PetSitters').snapshots(),
-          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
-            if(!snapshot.hasData){
-              return Text("No pet sitter");
-            }
-            return Directionality(
-              textDirection: TextDirection.ltr,
-              child: ListView(
-                  padding: const EdgeInsets.all(8),
-                  children: snapshot.data.docs.map((doc) => TextButton(onPressed: (){print('hello');},child: ListTile(tileColor: Colors.deepOrangeAccent,title: Text(doc['name']+' '+doc['surname']), subtitle: Text(doc['address'])))).toList()
-              ),
-            );
-          }
-        )
-      ),
-    ),
-    );
-  }
-}
 
 
 class UserProfile extends StatefulWidget {
@@ -113,31 +64,18 @@ class PetOwner extends StatefulWidget {
 
 class _PetOwnerState extends State<PetOwner> {
 
-  /*String username = 'undefined';
-  void petOwnerName() async{
-    var doc =FirebaseFirestore.instance.collection('PetOwners').
-    doc('6NQKHmeje3xWaPjgrtRf');
-
-    var docSnap = await doc.get();
-
-    var data = docSnap.data();
-
-    print([data['name']]);
-    setState(() {
-      username =data['name'];
-    });
-    print(username);
-  }*/
-
    String petName;
    int selectedItemIndex=0;
-   //Function onItemTap;
+
+   String petOwnerName;
+   String petOwnerSurname;
+   List <String> breeds;
 
    void onItemTap(int index) {
      setState(() {
        selectedItemIndex=index;
      });
-     selectedItemIndex==1 && ModalRoute.of(context).settings.name!='LookForPetSitters'?Navigator.of(context).push(MaterialPageRoute(
+     /*selectedItemIndex==1 && ModalRoute.of(context).settings.name!='LookForPetSitters'?Navigator.of(context).push(MaterialPageRoute(
          builder: (context){
            return LookForPetSitters();
          }
@@ -149,7 +87,7 @@ class _PetOwnerState extends State<PetOwner> {
          }
      ))
          :
-     print('no action available');
+     print('no action available');*/
 
    }
 
@@ -160,7 +98,7 @@ class _PetOwnerState extends State<PetOwner> {
 
         title: Text(widget.title),
       ),
-      body: Center(
+      body: selectedItemIndex==0?Center(
         child: Column(
           children: <Widget>[
             Expanded(
@@ -189,11 +127,13 @@ class _PetOwnerState extends State<PetOwner> {
                       StreamBuilder<DocumentSnapshot>(
                       stream: FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID).snapshots(),
                       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+
                         if (!snapshot.hasData) {
                           return  Text('Loading...' , style: new TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold));
                         }
                         else {
-                          return  Text(snapshot.data['name'].toString()+' '+snapshot.data['surname'].toString(), style: new TextStyle(fontSize: 25, color: const Color(
+                          return
+                            Text( snapshot.data['name'].toString()+' '+snapshot.data['surname'].toString(), style: new TextStyle(fontSize: 25, color: const Color(
                               0xFF86351C), fontWeight: FontWeight.bold));
                         }
                       }
@@ -307,8 +247,97 @@ class _PetOwnerState extends State<PetOwner> {
               ),
           ],
         ),
-      ),
+      )
+          :
+      Container(
+      color: Colors.orangeAccent,
+      child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('PetSitters').snapshots(),
+              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> petSitterSnapshot){
+                if(!petSitterSnapshot.hasData){
+                  return Container(
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator()
+                  );
+                }
+                return Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: ListView(
+                      padding: const EdgeInsets.all(8),
+                      children: petSitterSnapshot.data.docs.map((petSitterDoc) => TextButton(
+                          onPressed: (){print('hello');},
+                          child: Container(
+                            color: Colors.deepOrangeAccent,
+                            child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 240,
+                                    child: ListTile(
+                                        title: Text(petSitterDoc['name']+' '+petSitterDoc['surname']), subtitle: Text(petSitterDoc['address'])
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 80,
+                                    child: ElevatedButton(
+                                      child:Text('Hire'),
+                                      onPressed:() async{
+                                        var petOwnerDoc= FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID);
+                                        DocumentSnapshot snap = await petOwnerDoc.get();
 
+
+                                        showDialog(barrierDismissible: true,context: context, builder: (context){
+                                          return AlertDialog(
+                                            content: Text('For which pet would you like to hire?'),
+                                            actions: [StreamBuilder<QuerySnapshot>(
+                                                stream: FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID).collection('Pets').snapshots(),
+                                                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> petSnap) {
+                                                  if (!petSnap.hasData) {
+                                                    return  Text('Loading...' , style: new TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold));
+                                                  }
+                                                  else {
+                                                    return  Directionality(
+                                                        textDirection: TextDirection.ltr,
+                                                        child: Container(
+                                                          alignment: Alignment.center,
+                                                          height: 40,
+                                                          width: 300,
+                                                          child: ListView(
+
+                                                            scrollDirection:Axis.horizontal,
+                                                              shrinkWrap: true,
+                                                            children: petSnap.data.docs.map((petDoc) =>
+                                                                  TextButton(onPressed: () { Map<String, dynamic> petOwnerData = snap.data();
+                                                                  var col = FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Request');
+                                                                  print(petSitterDoc.id);
+                                                                      col.add(
+                                                                      {'Request Letter':petOwnerData['name'].toString()+ ' ' + petOwnerData['surname'].toString()+' would like to hire you for '+ petDoc['Name'].toString()+ '.\n'
+                                                                          'It is a '+petDoc['Breed'].toString()+' and lives in '+petDoc['Living Area'].toString()+ '. Do you accept?'});
+                                                                      Navigator.pop(context);
+                                                                      },
+                                                                    child: Text(petDoc['Name']),)).toList()),
+                                                        ));
+
+}})],
+                                          );
+                                        }
+                                        );
+
+
+                                      },
+                                    ),
+                                  )
+                                ]
+                            ),
+                          )
+                      )).toList()
+                  ),
+                );
+              }
+          )
+      ),
+      ),
 
       bottomNavigationBar: BottomNavigationBar(
         onTap: onItemTap,
@@ -326,8 +355,8 @@ class _PetOwnerState extends State<PetOwner> {
             label: 'Look For Pet Sitters',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_alert_sharp, size: 40),
-            label: 'Chance Wheel',
+            icon: Icon(Icons.settings, size: 40),
+            label: 'Settings',
           ),
         ],
       ),
@@ -510,7 +539,7 @@ class _PetState extends State<Pet> {
                             isCombChecked = value;
 
                             if (this.isCombChecked) {
-                              combText = 'Comb   ';
+                              combText = 'Comb  ';
                             }
                             else
                               combText = '';
@@ -532,7 +561,7 @@ class _PetState extends State<Pet> {
                             isBatheChecked = value;
 
                             if (this.isBatheChecked) {
-                              batheText = 'Bathe   ';
+                              batheText = 'Bathe  ';
                             }
                             else
                               batheText = '';
@@ -582,7 +611,7 @@ class _PetState extends State<Pet> {
                           isTakeForAWalkChecked = value;
 
                           if (this.isTakeForAWalkChecked) {
-                            walkText = 'Take for a walk   ';
+                            walkText = 'Take for a walk  ';
                           }
                           else
                             walkText = '';
@@ -620,7 +649,7 @@ class _PetState extends State<Pet> {
             'Species': this.species,
             'Breed': this.breed,
             'Living Area':this.livingArea,
-            'Care Routine': this.careRoutine
+            'Care Routine': this.careRoutine.toString()
           });
 
             showDialog(barrierDismissible: false,context: context, builder: (context){
@@ -656,7 +685,7 @@ class _PetState extends State<Pet> {
     @override
     Widget build(BuildContext context){
       return Scaffold(
-        backgroundColor: const Color(0xFF83ECFF),
+        backgroundColor: const Color(0xFF00DEFF),
         appBar: AppBar(title: Text('Pets'), backgroundColor: Colors.blueAccent,),
         body: Container(
           child: Directionality(
@@ -670,22 +699,79 @@ class _PetState extends State<Pet> {
               }
               else {
                 return ListView(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(10),
                     children: snapshot.data.docs.map((doc) =>
                         !snapshot.hasError?
-                    new ListTile(
-                        title: Text(doc['Name']),
-                        subtitle: Text(
-                            'Age: ' + doc['Age'].toString()
-                                + '\n' +
-                                'Species: ' + doc['Species']
-                                + '\n' +
-                                'Breed: ' + doc['Breed']
-                                + '\n' +
-                                'Living Area: ' + doc['Living Area']
-                                + '\n' +
-                                'Care Routine: ' + doc['Care Routine'])
-                    ) :
+                    Card(
+                      color: Color(0xFFC8F7FF),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 250,
+                            child: ListTile(
+                              title: Text(doc['Name']),
+                              subtitle: Text(
+                                  'Age: ' + doc['Age'].toString()
+                                      + '\n' +
+                                      'Species: ' + doc['Species']
+                                      + '\n' +
+                                      'Breed: ' + doc['Breed']
+                                      + '\n' +
+                                      'Living Area: ' + doc['Living Area']
+                                      + '\n' +
+                                      'Care Routine: ' + doc['Care Routine'])
+                        ),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                              child:
+                              Column(
+                                children:[
+                                  ElevatedButton(
+                                  style: ElevatedButton.styleFrom(primary: Color(
+                                      0xFFFFFFFF)),
+                                  onPressed: () {  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context){
+                                    return EditPet(petOwnerID: ID, petID: doc.id);}
+                                  ));},
+                                  child: Text('Edit', style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold,fontSize: 17), ),
+                                ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(primary: Colors.red),
+                                    onPressed: () {
+                                      var document = FirebaseFirestore.instance.collection('PetOwners').doc(
+                                        ID).collection('Pets').doc(doc.id);
+                                    showDialog(barrierDismissible: true,context: context, builder: (context){
+                                      return AlertDialog(
+                                        content: Text('Are you sure you want to delete '+doc['Name'] + '?'),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                document.delete();
+                                                Navigator.pop(context);
+                                                } ,
+                                              child: Text('Yes'),
+                                          ),
+
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            } ,
+                                            child: Text('No'),
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                    );
+                                    },
+                                    child: Icon(Icons.delete_rounded)//, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 17), ),
+                                  ),
+                                ]
+                              ),
+                            ),
+                        ]
+                      ),
+                    ):
                     Text('Press + to add a pet')).toList()
                 );
               }
@@ -708,15 +794,288 @@ class _PetState extends State<Pet> {
     }
 }
 
-class ChanceWheel extends StatelessWidget {
-  const ChanceWheel({Key key}) : super(key: key);
+class EditPet extends StatefulWidget {
+  EditPet({Key key, this.petOwnerID, this.petID}) : super(key: key);
+
+  final String petOwnerID;
+  final String petID;
+
+  @override
+  _EditPetState createState() => _EditPetState();
+}
+
+class _EditPetState extends State<EditPet> {
+  final nameController = TextEditingController();
+  final ageController = TextEditingController();
+  final speciesController = TextEditingController();
+  final breedController = TextEditingController();
+  final livingAreaController = TextEditingController();
+
+  String name;
+  int age=0;
+  String species;
+  String breed;
+  String livingArea;
+
+  String careRoutine='';
+
+  bool isFeedChecked = false;
+  bool isCombChecked = false;
+  bool isBatheChecked = false;
+  bool isTakeForAWalkChecked = false;
+
+  String feedText = '';
+  String combText = '';
+  String batheText = '';
+  String walkText = '';
+
+
+
+  AsyncSnapshot<DocumentSnapshot> snapshot;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Chance Wheel'), backgroundColor: Colors.indigo,),
-      backgroundColor: Colors.deepPurpleAccent,
+      appBar: AppBar(title: Text('Edit Pet'), backgroundColor: Colors.deepPurple[300],),
+      backgroundColor: Color(0xFFCFC4FF),
+      body: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance.collection('PetOwners').doc(widget.petOwnerID).collection('Pets').doc(widget.petID).snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (!snapshot.hasData) {
+          return  Text('Loading...' , style: new TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold));
+          }
+          else {
+          return  Directionality(
+            textDirection: TextDirection.ltr,
+            child: ListView(
+                children: [
+                  Container(
+                    alignment:Alignment.topLeft,
+                    child: Text('Name: ', style: TextStyle(fontSize: 30, color: Colors.deepPurple, fontWeight: FontWeight.bold,),),
+                  ),
+                  Form(
 
+                      child: TextField(
+                          controller: nameController,
+                          style: TextStyle(fontSize: 25),
+                          decoration: InputDecoration(
+                              hintText: snapshot.data['Name']
+                          )
+                      )
+                  ),
+
+                  Container(
+                    alignment:Alignment.topLeft,
+                    child: Text('Age ', style: TextStyle(fontSize: 30, color: Colors.deepPurple, fontWeight: FontWeight.bold,),),
+                  ),
+                  Form(
+
+                      child: TextField(
+                          controller: ageController,
+                          style: TextStyle(fontSize: 25),
+                          decoration: InputDecoration(
+                            //helperText: 'Helper',
+                            // labelText: 'Label',
+                              hintText: snapshot.data['Age'].toString()
+                          )
+                      )
+                  ),
+
+                  Container(
+                    alignment:Alignment.topLeft,
+                    child: Text('Species: ', style: TextStyle(fontSize: 30, color: Colors.deepPurple, fontWeight: FontWeight.bold,),),
+                  ),
+                  Form(
+
+                      child: TextField(
+                          controller: speciesController,
+                          style: TextStyle(fontSize: 25),
+                          decoration: InputDecoration(
+                            //helperText: 'Helper',
+                            // labelText: 'Label',
+                              hintText: snapshot.data['Species']
+                          )
+                      )
+                  ),
+
+                  Container(
+                    alignment:Alignment.topLeft,
+                    child: Text('Breed: ', style: TextStyle(fontSize: 30, color: Colors.deepPurple, fontWeight: FontWeight.bold,),),
+                  ),
+                  Form(
+
+                      child: TextField(
+                          controller: breedController,
+                          style: TextStyle(fontSize: 25),
+                          decoration: InputDecoration(
+                            //helperText: 'Helper',
+                            // labelText: 'Label',
+                              hintText: snapshot.data['Breed']
+                          )
+                      )
+                  ),
+
+                  Container(
+                    alignment:Alignment.topLeft,
+                    child: Text('Living Area: ', style: TextStyle(fontSize: 30, color: Colors.deepPurple, fontWeight: FontWeight.bold,),),
+                  ),
+                  Form(
+
+                      child: TextField(
+                          controller: livingAreaController,
+                          style: TextStyle(fontSize: 25),
+                          decoration: InputDecoration(
+                            //helperText: 'Helper',
+                            // labelText: 'Label',
+                              hintText: snapshot.data['Living Area']
+                          )
+                      )
+                  ),
+
+                  Container(
+                    alignment:Alignment.topLeft,
+                    child: Text('Care Routine: ', style: TextStyle(fontSize: 30, color: const Color(
+                        0xFF002865), fontWeight: FontWeight.bold,),),
+                  ),
+
+                  Row(
+                      children: [
+                        Expanded(
+                          child: CheckboxListTile(
+                            activeColor:const Color(0xFF38329C),
+                            checkColor: const Color(0xFFBAB7E5),
+                            title: Text('Comb', style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold, color: this.isCombChecked?const Color(0xFF38329C):const Color(
+                                0xFF465480)),),
+                            value: this.isCombChecked,
+                            onChanged: (bool value) { setState(() {
+                              isCombChecked = value;
+
+                              if (this.isCombChecked) {
+                                combText = 'Comb ';
+                              }
+                              else
+                                combText = '';
+
+                              careRoutine= batheText+combText+feedText+ walkText;
+                            });},
+                            selected: this.isCombChecked,
+                          ),
+                        ),
+
+                        Expanded(
+                          child: CheckboxListTile(
+                            activeColor:const Color(0xFF38329C),
+                            checkColor: const Color(0xFFBAB7E5),
+                            title: Text('Bathe', style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold, color: this.isBatheChecked?const Color(0xFF38329C):const Color(
+                                0xFF465480)),),
+                            value: this.isBatheChecked,
+                            onChanged: (bool value) { setState(() {
+                              isBatheChecked = value;
+
+                              if (this.isBatheChecked) {
+                                batheText = 'Bathe ';
+                              }
+                              else
+                                batheText = '';
+
+                              careRoutine= batheText+combText+feedText+ walkText;
+                            });},
+                            selected: this.isBatheChecked,
+                          ),
+                        ),
+
+
+                      ]
+                  ),
+
+                  Row(
+                      children: [
+                        Expanded(
+                          child: CheckboxListTile(
+                            activeColor:const Color(0xFF38329C),
+                            checkColor: const Color(0xFFBAB7E5),
+                            title: Text('Feed', style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold, color: this.isFeedChecked?const Color(0xFF38329C):const Color(
+                                0xFF465480)),),
+                            value: this.isFeedChecked,
+                            onChanged: (bool value) { setState(() {
+                              isFeedChecked = value;
+
+                              if (this.isFeedChecked) {
+                                feedText = 'Feed ';
+                              }
+
+                              else
+                                feedText = '';
+
+                              careRoutine= batheText+combText+feedText+ walkText;
+                            });},
+                            selected: this.isFeedChecked,
+                          ),
+                        ),
+                        Expanded(
+                          child: CheckboxListTile(
+                            activeColor:const Color(0xFF38329C),
+                            checkColor: const Color(0xFFBAB7E5),
+                            title: Text('Take for a walk', style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold, color: this.isTakeForAWalkChecked?const Color(0xFF38329C):const Color(
+                                0xFF465480)),),
+                            value: this.isTakeForAWalkChecked,
+                            onChanged: (bool value) { setState(() {
+                              isTakeForAWalkChecked = value;
+
+                              if (this.isTakeForAWalkChecked) {
+                                walkText = 'Take for a walk ';
+                              }
+                              else
+                                walkText = '';
+
+                              careRoutine= batheText+combText+feedText+ walkText;
+                            });},
+                            selected: this.isTakeForAWalkChecked,
+                          ),
+                        ),
+                      ]
+                  ),
+                  Text(this.careRoutine==null?'undefined ': careRoutine, textAlign: TextAlign.center, style: TextStyle(fontSize: 20,color: const Color(
+                      0xFF002865), fontWeight: FontWeight.bold), ),
+
+                ]
+            ),
+          );
+
+          }
+          }
+      ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+        setState(() {
+          name=nameController.text;
+          age=int.tryParse(ageController.text);
+          species=speciesController.text;
+          breed=breedController.text;
+          livingArea=livingAreaController.text;
+        });
+        var pet = FirebaseFirestore.instance.collection('PetOwners').doc(widget.petOwnerID).collection('Pets').doc(widget.petID);
+        if(name!=''){
+          pet.update(
+              {'Name':nameController.text});
+        }
+        if(age!=null){
+          pet.update({'Age':int.tryParse(ageController.text)});
+        }
+        if(species!=''){
+          pet.update({'Species':speciesController.text});
+        }
+        if(breed!=''){
+          pet.update({'Breed':breedController.text});
+        }
+        if(livingArea!=''){
+          pet.update({'Living Area':livingAreaController.text});
+        }
+        if(careRoutine!=''){
+          pet.update({'Care Routine':careRoutine.toString()});
+        }
+        Navigator.pop(context);
+      },child: Icon(Icons.check)),
     );
   }
 }
