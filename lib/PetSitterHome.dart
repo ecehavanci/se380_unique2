@@ -89,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   @override
   Widget build(BuildContext context) {
-    print(widget.ID);
+
     getInfoFromFirebase();
     return Scaffold(
       appBar: AppBar(
@@ -320,7 +320,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   var counter = await Navigator.of(context)
                                       .push(MaterialPageRoute(
                                       builder: (context) {
-                                        return Request();
+                                        return Request(userID:widget.ID);
                                       }));
                                   setState(() {
                                     this.requestCounter = counter;
