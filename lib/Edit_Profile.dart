@@ -21,8 +21,10 @@ class _EditableState extends State<Editable> {
   List<String> myDays = List<String>();
   String myShiftvalue;
   bool pressed = false;
-
   var choosed;
+  String imagePath;
+  var fromCam;
+
 
   Function mydaysIterate() {
     days_available.forEach((key, value) {
@@ -65,6 +67,7 @@ class _EditableState extends State<Editable> {
   Widget build(BuildContext context) {
     DocumentReference doc= FirebaseFirestore.instance.collection("PetSitters").doc(widget.docID);
 
+
     return Scaffold(
         appBar: AppBar(
             backgroundColor: Colors.orange,
@@ -88,10 +91,10 @@ class _EditableState extends State<Editable> {
                       height: 175,
                       color: Colors.amber,
                       margin: EdgeInsets.all(5),
-                      child: widget.imagePath==null?Text("You don't have any image"):Container(
+                      child: imagePath==null?Text("You don't have any image"):Container(
                           height: 160,
                           width: 160,
-                          child: Image.file(new File(widget.imagePath)))),
+                          child: Image.file(new File(imagePath)))),
                     Positioned(
                       right: 5,
                       bottom: 5,
@@ -101,11 +104,15 @@ class _EditableState extends State<Editable> {
                           child: IconButton(
                             icon: const Icon(Icons.camera_alt_outlined),
                             onPressed: () async {
-                              Navigator.of(context)
+                              fromCam= await Navigator.of(context)
                                   .push(MaterialPageRoute(
                                   builder: (context) {
                                     return TakePictureScreen(camera: widget.camera);
                                   }));
+                             print(fromCam);
+                             setState(() {
+                               imagePath=fromCam;
+                             });
                             },
                           )),
                     )
@@ -178,8 +185,10 @@ class _EditableState extends State<Editable> {
                 ),
                 FloatingActionButton.extended(
                   onPressed: () {
+
+
                     Navigator.of(context)
-                        .pop<List<String>>([myDays.toString(), myShiftvalue]);
+                        .pop<List<String>>([myDays.toString(), myShiftvalue,imagePath]);
                     //inst.add({'shifts':myShiftvalue,'days':myDays});
                     if(nameController.text!=''){
                       doc.update({
@@ -226,6 +235,7 @@ class _EditableState extends State<Editable> {
                     "days": myDays
                     });
                     }
+
 
 
                       /*"surname":!(surnameController.text==null)?surnameController.text:{},

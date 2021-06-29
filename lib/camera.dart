@@ -64,14 +64,14 @@ class TakePictureScreenState extends State<TakePictureScreen> {
 
             final image = await _controller.takePicture();
 
-            await Navigator.of(context).push(
-              MaterialPageRoute(
+            /*await Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => Editable(
 
                   imagePath: image.path,
                 ),
-              ),
-            );
+              )*/
+            Navigator.of(context).pop<String>(image.path);
+
           } catch (e) {
             print(e);
           }
