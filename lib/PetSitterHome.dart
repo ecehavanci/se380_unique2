@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var price;
   String bio;
   String imagepath;
-
+  String photoPathFirebase;
   //Image imageFile;
 
 
@@ -82,6 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
       address=dataSitters["address"];
       price=dataSitters["price"];
       bio=dataSitters["bio"];
+      photoPathFirebase=dataSitters["photoPath"];
 
     });
 
@@ -110,10 +111,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: 175,
                     color: Colors.blue[200],
                     margin: EdgeInsets.all(5),
-                      child:imagepath==null?Text("You don't have any image"):Container(
+                      child:photoPathFirebase==null?Text("You don't have any image"):Container(
                           height: 160,
                           width: 160,
-                          child: Image.file(File(imagepath)))
+                          child: Image.file(File(photoPathFirebase)))
                   ),
                   Positioned(
                     right: 3,

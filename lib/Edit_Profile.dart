@@ -91,7 +91,7 @@ class _EditableState extends State<Editable> {
                       height: 175,
                       color: Colors.amber,
                       margin: EdgeInsets.all(5),
-                      child: imagePath==null?Text("You don't have any image"):Container(
+                      child: imagePath==null?Text("You don't have any updated image!"):Container(
                           height: 160,
                           width: 160,
                           child: Image.file(new File(imagePath)))),
@@ -103,6 +103,7 @@ class _EditableState extends State<Editable> {
                           width: 60,
                           child: IconButton(
                             icon: const Icon(Icons.camera_alt_outlined),
+                            color: Colors.blue[100],
                             onPressed: () async {
                               fromCam= await Navigator.of(context)
                                   .push(MaterialPageRoute(
@@ -235,6 +236,12 @@ class _EditableState extends State<Editable> {
                     "days": myDays
                     });
                     }
+                    if(myDays.toString()!=''){
+                      doc.update({
+                        "photoPath": imagePath
+                      });
+                    }
+
 
 
 
