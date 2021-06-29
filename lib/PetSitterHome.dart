@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'Edit_Profile.dart';
@@ -5,6 +6,7 @@ import 'RequestPage.dart';
 import 'comment_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
 
 //MyApp seems normal to me
 Future<void> main() async {
@@ -15,8 +17,10 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   final String userID;
+  final CameraDescription camera;
 
-  MyApp({Key key, this.userID}) : super(key: key);
+  MyApp({Key key, this.userID,this.camera}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     print(userID);
@@ -24,7 +28,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: MyHomePage(title: 'Pet Sitter Home Page', ID: userID),
+      home: MyHomePage(title: 'Pet Sitter Home Page', ID: userID,camera:camera),
     );
     /*return MaterialApp(
       theme: ThemeData(
@@ -37,7 +41,8 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   final String ID;
-  MyHomePage({Key key, this.title, this.ID}) : super(key: key);
+  final CameraDescription camera;
+  MyHomePage({Key key, this.title, this.ID,this.camera}) : super(key: key);
 
   final String title;
 
@@ -46,14 +51,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   String address;
-
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   String days;
   String shifts;
   int requestCounter;
@@ -63,6 +62,9 @@ class _MyHomePageState extends State<MyHomePage> {
   int phone;
   var price;
   String bio;
+  String imagepath;
+
+  //Image imageFile;
 
 
 
@@ -108,6 +110,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: 175,
                     color: Colors.blue[200],
                     margin: EdgeInsets.all(5),
+                      child:imagepath==null?Text("You don't have any image"):Container(
+                          height: 160,
+                          width: 160,
+                          child: Image.file(File(imagepath)))
                   ),
                   Positioned(
                     right: 3,
@@ -250,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             Expanded(
                               child: Text(
-                                "${days == null ? "Please add your available days!" : days.substring(1, days.length - 1)}",
+                                "${days == null ? "Please add your available fromEditable!" : days.substring(1, days.length - 1)}",
                                 textAlign: TextAlign.end,
                                 style: TextStyle(
                                     fontWeight: FontWeight.normal,
@@ -363,13 +369,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         padding: EdgeInsets.all(5),
                         child: FloatingActionButton.extended(
                           onPressed: () async {
-                            var days = await Navigator.of(context)
+                            var fromEditable = await Navigator.of(context)
                                 .push(MaterialPageRoute(builder: (context) {
-                              return Editable(docID:widget.ID);
+                              return Editable(docID:widget.ID,camera: widget.camera);
                             }));
                             setState(() {
-                              this.days = days[0];
-                              shifts = days[1];
+                              this.days = fromEditable[0];
+                              shifts = fromEditable[1];
+                              imagepath= fromEditable[2];
+                              //imageFile = Image.file(new File(imagepath));
                             });
                           },
                           backgroundColor: Colors.blue[200],
@@ -385,11 +393,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           onPressed: () {
 
                             getInfoFromFirebase();
-                            /*Navigator.of(context)
-                              .push(MaterialPageRoute(
-                              builder: (context) {
-                                return UserInformation();
-                              }));*/},
+                           },
                           backgroundColor: Colors.blue[200],
                           label: const Text("Chance Wheel"),
                           icon: const Icon(Icons.celebration),
