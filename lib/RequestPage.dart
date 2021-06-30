@@ -95,6 +95,24 @@ class _RequestState extends State<Request> {
                                       counter = (counter - 1);
                                     });
                                     await FirebaseFirestore.instance.collection('PetSitters').doc(widget.userID).collection("Request").doc(document.id).delete();
+
+                                    showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) => AlertDialog(
+                                        title: const Text('Accept Information'),
+                                        content: const Text('Your phone number has been sent to..'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context, 'Cancel'),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context, 'OK'),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
                                   },
                                   heroTag: "btnnn",
                                   backgroundColor: Colors.blue[200],

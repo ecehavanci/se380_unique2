@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'Edit_Profile.dart';
+import 'Notifications.dart';
 import 'RequestPage.dart';
 import 'comment_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -94,6 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Colors.orange,
         title: Text(widget.title),
+
+
       ),
       body:
       Container(
@@ -391,13 +394,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Container(
                         padding: EdgeInsets.all(5),
                         child: FloatingActionButton.extended(
-                          onPressed: () {
-
-                            getInfoFromFirebase();
+                          onPressed: () async {
+                            await Navigator.of(context)
+                                .push(MaterialPageRoute(
+                                builder: (context) {
+                                  return NotificationLister();
+                                }));
                            },
                           backgroundColor: Colors.blue[200],
-                          label: const Text("Chance Wheel"),
-                          icon: const Icon(Icons.celebration),
+                          label: const Text("Notifications"),
+                          icon: const Icon(Icons.comment),
                           heroTag: "btn4",
                         )),
                   ),
@@ -406,7 +412,70 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+      drawer: Drawer(
+          child: Drawer(
+            // Add a ListView to the drawer. This ensures the user can scroll
+            // through the options in the drawer if there isn't enough vertical
+            // space to fit everything.
+            child: ListView(
+              // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Colors.blue[200],
+                  ),
+                  child: Text('Home Page'),
+                ),
+                ListTile(
+                  leading: Icon(Icons.app_settings_alt_sharp),
+                  title: Text('Requests'),
+                  onTap: () async {
+                    await Navigator.of(context)
+                        .push(MaterialPageRoute(
+                        builder: (context) {
+                          return Request(userID:widget.ID);
+                        }));
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.stacked_line_chart_outlined),
+                  title: Text('Ratings'),
+                  onTap: () async {
+                    await Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return Ratings(ID:widget.ID);
+                    }));
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.edit),
+                  title: Text('Editable'),
+                  onTap: () async {
+                    await Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return Editable(docID:widget.ID,camera: widget.camera);
+                    }));
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.comment),
+                  title: Text('Nofitications'),
+                  onTap: () async {
+                    await Navigator.of(context)
+                        .push(MaterialPageRoute(
+                    builder: (context) {
+                    return NotificationLister();
+                }));
+                },
+    ),
+
+              ],
+            ),
+          )
+// Populate the Drawer in the next step.
+      ),// This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
