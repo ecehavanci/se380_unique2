@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'dart:io';
 
 class Ratings extends StatefulWidget {
   var ID;
@@ -13,11 +14,11 @@ class Ratings extends StatefulWidget {
 
 
 class _RatingsState extends State<Ratings> {
-  @override
-
 
   double avg_star = 4;
   String bio = "First edit your bio please!";
+  String photoPathFirebase;
+
   void getInfoFromFirebasee() async{
     DocumentReference doc= FirebaseFirestore.instance.collection("PetSitters").doc(widget.ID);
 
@@ -26,7 +27,7 @@ class _RatingsState extends State<Ratings> {
 
     setState(() {
       bio=dataSitters["bio"];
-
+      photoPathFirebase=dataSitters["photoPath"];
     });
 
   }
@@ -50,6 +51,10 @@ class _RatingsState extends State<Ratings> {
                   height: 175,
                   color: Colors.amber,
                   margin: EdgeInsets.all(15),
+                    child:photoPathFirebase==null?Text("You don't have any image"):Container(
+                        height: 160,
+                        width: 160,
+                        child: Image.file(File(photoPathFirebase)))
                 ),
                 StarDisplay(avg_star, 35)
               ],
@@ -93,52 +98,52 @@ class CommentsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.yellow.shade100,
-      child: ListView.separated(
-        itemCount: 10,
-        separatorBuilder: (BuildContext context, _) =>
-        const Divider(
-          color: Colors.pink,
-          thickness: 3,
+      return Container(
+        color: Colors.yellow.shade100,
+        child: ListView.separated(
+          itemCount: 10,
+          separatorBuilder: (BuildContext context, _) =>
+          const Divider(
+            color: Colors.pink,
+            thickness: 3,
+          ),
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        ' ${names[index]}',
+                        style: TextStyle(
+                            color: Colors.black.withOpacity(1.0)),
+                        textScaleFactor: 1.2,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      StarDisplay(stars[index].toDouble(), 5),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                          child: Text(
+                            '${comments[index]}',
+                            style: TextStyle(
+                                color: Colors.black.withOpacity(0.8)),
+                            textScaleFactor: 1,
+                          )),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
         ),
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      ' ${names[index]}',
-                      style: TextStyle(
-                          color: Colors.black.withOpacity(1.0)),
-                      textScaleFactor: 1.2,
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    StarDisplay(stars[index].toDouble(), 5),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                        child: Text(
-                          '${comments[index]}',
-                          style: TextStyle(
-                              color: Colors.black.withOpacity(0.8)),
-                          textScaleFactor: 1,
-                        )),
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
+      );
   }
 }
 
@@ -152,65 +157,65 @@ class _UserInformationState extends State<UserInformation> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        color: Colors.yellow.shade100,
-        padding:EdgeInsets.only(bottom: 5),
+      return Container(
+          color: Colors.yellow.shade100,
+          padding:EdgeInsets.only(bottom: 5),
 
-        child: StreamBuilder<QuerySnapshot>(
-          stream: _usersStream,
-          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasError) {
-              return Text('Something went wrong');
-            }
+          child: StreamBuilder<QuerySnapshot>(
+            stream: _usersStream,
+            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return Text('Something went wrong');
+              }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-            return new ListView(
+              return new ListView(
 
-              children: snapshot.data.docs.map((DocumentSnapshot document) {
-                Map<String, dynamic> data = document.data();
-                return new ListTile(
+                children: snapshot.data.docs.map((DocumentSnapshot document) {
+                  Map<String, dynamic> data = document.data();
+                  return new ListTile(
 
-                  title: SingleChildScrollView(
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      color: Colors.blue[100],
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          /*Row(
-                            children: [
-                              Text(
-                                ' ${names[index]}',
-                                style: TextStyle(
-                                    color: Colors.black.withOpacity(1.0)),
-                                textScaleFactor: 1.2,
-                              ),
-                            ],
-                          ),*/
-                          Row(
-                            children: [
-                              StarDisplay(data['star'].toDouble(), 5),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: Text(
-                                    '${data['comment']}',
-                                    style: TextStyle(
-                                        color: Colors.black.withOpacity(0.8)),
-                                    textScaleFactor: 1,
-                                  )),
-                            ],
-                          ),
-                        ],
+                    title: SingleChildScrollView(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        color: Colors.blue[100],
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            /*Row(
+                              children: [
+                                Text(
+                                  ' ${names[index]}',
+                                  style: TextStyle(
+                                      color: Colors.black.withOpacity(1.0)),
+                                  textScaleFactor: 1.2,
+                                ),
+                              ],
+                            ),*/
+                            Row(
+                              children: [
+                                StarDisplay(data['star'].toDouble(), 5),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: Text(
+                                      '${data['comment']}',
+                                      style: TextStyle(
+                                          color: Colors.black.withOpacity(0.8)),
+                                      textScaleFactor: 1,
+                                    )),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                   ),
                 );
               }).toList(),

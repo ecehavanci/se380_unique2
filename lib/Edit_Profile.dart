@@ -1,12 +1,17 @@
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:se380_unique/camera.dart';
 import 'comment_page.dart';
-//import 'package:image_picker/image_picker.dart';
-//Sıla was here
+import 'dart:async';
+import 'dart:io';
+
 class Editable extends StatefulWidget {
   var docID;
+  final CameraDescription camera;
+  final String imagePath;
 
-  Editable({this.docID,Key key}) : super(key: key);
+  Editable({this.docID,Key key,this.camera,this.imagePath}) : super(key: key);
 
   @override
   _EditableState createState() => _EditableState();
@@ -16,8 +21,10 @@ class _EditableState extends State<Editable> {
   List<String> myDays = List<String>();
   String myShiftvalue;
   bool pressed = false;
-
   var choosed;
+  String imagePath;
+  var fromCam;
+
 
   Function mydaysIterate() {
     days_available.forEach((key, value) {
@@ -60,6 +67,7 @@ class _EditableState extends State<Editable> {
   Widget build(BuildContext context) {
     DocumentReference doc= FirebaseFirestore.instance.collection("PetSitters").doc(widget.docID);
 
+
     return Scaffold(
         appBar: AppBar(
             backgroundColor: Colors.orange,
@@ -83,17 +91,29 @@ class _EditableState extends State<Editable> {
                       height: 175,
                       color: Colors.amber,
                       margin: EdgeInsets.all(5),
-                    ),
+                      child: imagePath==null?Text("You don't have any updated image!"):Container(
+                          height: 160,
+                          width: 160,
+                          child: Image.file(new File(imagePath)))),
                     Positioned(
                       right: 5,
                       bottom: 5,
-                      child: SizedBox(
+                      child: Container(
                           height: 45,
                           width: 60,
                           child: IconButton(
                             icon: const Icon(Icons.camera_alt_outlined),
+                            color: Colors.blue[100],
                             onPressed: () async {
-                              setState(() {});
+                              fromCam= await Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                  builder: (context) {
+                                    return TakePictureScreen(camera: widget.camera);
+                                  }));
+                             print(fromCam);
+                             setState(() {
+                               imagePath=fromCam;
+                             });
                             },
                           )),
                     )
@@ -166,8 +186,10 @@ class _EditableState extends State<Editable> {
                 ),
                 FloatingActionButton.extended(
                   onPressed: () {
+
+
                     Navigator.of(context)
-                        .pop<List<String>>([myDays.toString(), myShiftvalue]);
+                        .pop<List<String>>([myDays.toString(), myShiftvalue,imagePath]);
                     //inst.add({'shifts':myShiftvalue,'days':myDays});
                     if(nameController.text!=''){
                       doc.update({
@@ -214,6 +236,14 @@ class _EditableState extends State<Editable> {
                     "days": myDays
                     });
                     }
+                    if(myDays.toString()!=''){
+                      doc.update({
+                        "photoPath": imagePath
+                      });
+                    }
+
+
+
 
                       /*"surname":!(surnameController.text==null)?surnameController.text:{},
                       "email":!(mailController.text==null)?mailController.text:{},
