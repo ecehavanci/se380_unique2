@@ -11,21 +11,26 @@ class Request extends StatefulWidget {
 }
 
 class _RequestState extends State<Request> {
-  int counter = 10;
+  int counter ;
+  QuerySnapshot qsnap;
   var requestcol;
-  Stream<QuerySnapshot> _usersStream;
+  var _usersStream;
+
 
 @override
   void initState() {
     // TODO: implement initState
-    // requestcol=FirebaseFirestore.instance.collection('PetSitters').doc(widget.userID);
+      requestcol=FirebaseFirestore.instance.collection('PetSitters').doc(widget.userID).collection("Request");
      _usersStream = FirebaseFirestore.instance.collection("PetSitters").doc(widget.userID).collection("Request").snapshots();
+
+
 }
 
 
   @override
   Widget build(BuildContext context) {
-    print(counter);
+
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
@@ -59,8 +64,9 @@ class _RequestState extends State<Request> {
             return new ListView(
               children: snapshot.data.docs.map((DocumentSnapshot document) {
                 Map<String, dynamic> data = document.data();
-                return new ListTile(
+                var ss=snapshot.data.docs.length;
 
+                return new ListTile(
                   title: SingleChildScrollView(
                     child: Container(
                       padding: EdgeInsets.all(10),
@@ -83,11 +89,14 @@ class _RequestState extends State<Request> {
                                 width: 90,
                                 height: 30,
                                 child: FloatingActionButton.extended(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     setState(() {
-                                      counter = counter - 1;
+                                      counter=ss;
+                                      counter = (counter - 1);
                                     });
+                                    await FirebaseFirestore.instance.collection('PetSitters').doc(widget.userID).collection("Request").doc(document.id).delete();
                                   },
+                                  heroTag: "btnnn",
                                   backgroundColor: Colors.blue[200],
                                   label: const Text("Accept"),
                                   icon: const Icon(Icons.add_box_outlined),
@@ -97,11 +106,14 @@ class _RequestState extends State<Request> {
                                 width: 90,
                                 height: 30,
                                 child: FloatingActionButton.extended(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     setState(() {
+                                      counter=ss;
                                       counter = (counter - 1);
                                     });
+                                    await FirebaseFirestore.instance.collection('PetSitters').doc(widget.userID).collection("Request").doc(document.id).delete();
                                   },
+                                  heroTag: "btnnn2",
                                   backgroundColor: Colors.red[200],
                                   label: const Text("Decline"),
                                   icon: const Icon(Icons.delete_forever),

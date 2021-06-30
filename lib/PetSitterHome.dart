@@ -1,5 +1,4 @@
 import 'package:camera/camera.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'Edit_Profile.dart';
 import 'RequestPage.dart';
@@ -384,6 +383,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           backgroundColor: Colors.blue[200],
                           label: const Text("My Profile"),
                           icon: const Icon(Icons.person),
+                          heroTag: "btn3",
                         )),
                   ),
                   Expanded(
@@ -398,6 +398,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           backgroundColor: Colors.blue[200],
                           label: const Text("Chance Wheel"),
                           icon: const Icon(Icons.celebration),
+                          heroTag: "btn4",
                         )),
                   ),
                 ],
