@@ -64,6 +64,7 @@ class PetOwner extends StatefulWidget {
 
 class _PetOwnerState extends State<PetOwner> {
 
+  final commentController= TextEditingController();
    String petName;
    int selectedItemIndex=0;
 
@@ -281,51 +282,140 @@ class _PetOwnerState extends State<PetOwner> {
                                   SizedBox(
                                     width: 80,
                                     child: ElevatedButton(
-                                      child:Text('Hire'),
-                                      onPressed:() async{
-                                        var petOwnerDoc= FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID);
-                                        DocumentSnapshot snap = await petOwnerDoc.get();
+                                      child:Text('Details'),
+                                      onPressed: (){showDialog(barrierDismissible: true,context: context, builder: (context){
+                                        return AlertDialog(
+                                          backgroundColor: Colors.amber[200],
+                                          content: Container(
+                                            height: 400,
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [Text(petSitterDoc['name']+' '+petSitterDoc['surname'], style : TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                                                Text('Living Area: '+petSitterDoc['address'],   ),
+
+                                                StreamBuilder<QuerySnapshot>(
+                                                    stream: FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Comments').snapshots(),
+                                                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> commentsSnapshot){
+
+                                                      if(!commentsSnapshot.hasData){
+                                                        return Container(
+                                                            alignment: Alignment.center,
+                                                            child: CircularProgressIndicator()
+                                                        );
+                                                      }
+                                                      if(commentsSnapshot.data.docs.length>0){
+                                                          return Directionality(
+                                                            textDirection: TextDirection.ltr,
+                                                            child: Container(
+                                                              height: 300,
+                                                              width: 200,
+                                                                child: ListView(children: commentsSnapshot.data.docs.map((doc) =>
+                                                                    Card(
+                                                                      color: Colors.yellow[100],
+                                                                      child: ListTile(
+                                                                        title: Text(doc['comment maker\'s name']),
+                                                                        subtitle: Text(doc['star'].toString()+'\n '+doc['comment']),
+                                                                      ),
+
+                                                                    )
+                                                                ).toList()
+                                                            ),
+                                                          ));
+                                                      }
+                                                      return Text('There is no comment for that pet sitter. Be the first one to comment.');
+                                                      }),
+
+                                                      Row(
+                                                        children: [Container(
+                                                          height: 50,
+                                                          width: 150,
+                                                          child: Form(
+                                                            child: TextField(
+                                                              maxLines: null,
+                                                                controller: commentController,
+                                                                style: TextStyle(fontSize: 14),
+                                                                decoration: InputDecoration(
+                                                                    hintText: 'Enter your comment here'
+                                                                )
+                                                            )
+                                                          ),
+                                                        ),
+                                                          Container(
+                                                            alignment: Alignment.centerLeft,
+                                                              height: 35,
+                                                              width: 60,
+                                                              child: ElevatedButton(onPressed: () async{
+                                                                var petOwnerDoc= FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID);
+                                                                DocumentSnapshot snap = await petOwnerDoc.get();
+                                                                Map<String, dynamic> petOwnerData = snap.data();
+                                                                print('elevated button pressed');
+                                                                FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Comments').add({
+                                                                  'comment' : commentController.text.toString(),
+                                                                  'comment maker\'s name' : petOwnerData['name']+' '+ petOwnerData['surname'],
+                                                                  'star': 3,
+                                                                }
+                                                                );
+                                                              }, child: Icon(Icons.check, ))
+                                                          ),
+                                                        ]
+                                                      ),
 
 
-                                        showDialog(barrierDismissible: true,context: context, builder: (context){
-                                          return AlertDialog(
-                                            content: Text('For which pet would you like to hire?'),
-                                            actions: [StreamBuilder<QuerySnapshot>(
-                                                stream: FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID).collection('Pets').snapshots(),
-                                                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> petSnap) {
-                                                  if (!petSnap.hasData) {
-                                                    return  Text('Loading...' , style: new TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold));
-                                                  }
-                                                  else {
-                                                    return  Directionality(
-                                                        textDirection: TextDirection.ltr,
-                                                        child: Container(
-                                                          alignment: Alignment.center,
-                                                          height: 40,
-                                                          width: 300,
-                                                          child: ListView(
 
-                                                            scrollDirection:Axis.horizontal,
-                                                              shrinkWrap: true,
-                                                            children: petSnap.data.docs.map((petDoc) =>
-                                                                  TextButton(onPressed: () { Map<String, dynamic> petOwnerData = snap.data();
-                                                                  var col = FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Request');
-                                                                  print(petSitterDoc.id);
-                                                                      col.add(
-                                                                      {'Request Letter':petOwnerData['name'].toString()+ ' ' + petOwnerData['surname'].toString()+' would like to hire you for '+ petDoc['Name'].toString()+ '.\n'
-                                                                          'It is a '+petDoc['Breed'].toString()+' and lives in '+petDoc['Living Area'].toString()+ '. Do you accept?'});
-                                                                      Navigator.pop(context);
-                                                                      },
-                                                                    child: Text(petDoc['Name']),)).toList()),
-                                                        ));
+                                              ],
+                                            ),
+                                          ),
+                                          actions: [TextButton(onPressed: () async{
+                                          var petOwnerDoc= FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID);
+                                          DocumentSnapshot snap = await petOwnerDoc.get();
 
-}})],
+
+                                          showDialog(barrierDismissible: true,context: context, builder: (context){
+                                            return AlertDialog(
+                                              content: Text('For which pet would you like to hire?'),
+                                              actions: [StreamBuilder<QuerySnapshot>(
+                                                  stream: FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID).collection('Pets').snapshots(),
+                                                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> petSnap) {
+                                                    if (!petSnap.hasData) {
+                                                      return  Text('Loading...' , style: new TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold));
+                                                    }
+                                                    else {
+                                                      return  Directionality(
+                                                          textDirection: TextDirection.ltr,
+                                                          child: Container(
+                                                            alignment: Alignment.center,
+                                                            height: 40,
+                                                            width: 300,
+                                                            child: ListView(
+
+                                                                scrollDirection:Axis.horizontal,
+                                                                shrinkWrap: true,
+                                                                children: petSnap.data.docs.map((petDoc) =>
+                                                                    TextButton(onPressed: () { Map<String, dynamic> petOwnerData = snap.data();
+                                                                    var col = FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Request');
+                                                                    print(petSitterDoc.id);
+                                                                    col.add(
+                                                                        {'Request Letter':petOwnerData['name'].toString()+ ' ' + petOwnerData['surname'].toString()+' would like to hire you for '+ petDoc['Name'].toString()+ '.\n'
+                                                                            'It is a '+petDoc['Breed'].toString()+' and lives in '+petDoc['Living Area'].toString()+ '. Do you accept?'});
+                                                                    Navigator.pop(context);
+                                                                    },
+                                                                      child: Text(petDoc['Name']),)).toList()
+                                                            ),
+                                                          )
+                                                      );
+
+                                                    }})],
+                                            );
+                                          }
                                           );
-                                        }
+
+
+                                        }, child: Text('Hire'))],
                                         );
-
-
-                                      },
+                                      }
+                                      );
+                                      }
                                     ),
                                   )
                                 ]
