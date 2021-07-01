@@ -322,7 +322,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   var counter = await Navigator.of(context)
                                       .push(MaterialPageRoute(
                                       builder: (context) {
-                                        return Request(userID:widget.ID);
+                                        return Request(userID:widget.ID,camera:widget.camera);
                                       }));
                                   setState(() {
                                     this.requestCounter = counter;
@@ -398,7 +398,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             await Navigator.of(context)
                                 .push(MaterialPageRoute(
                                 builder: (context) {
-                                  return NotificationLister();
+                                  return NotificationLister(camera:widget.camera);
                                 }));
                            },
                           backgroundColor: Colors.blue[200],
@@ -413,7 +413,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      drawer: Drawer(
+      endDrawer: Drawer(
           child: Drawer(
             // Add a ListView to the drawer. This ensures the user can scroll
             // through the options in the drawer if there isn't enough vertical
@@ -432,10 +432,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   leading: Icon(Icons.app_settings_alt_sharp),
                   title: Text('Requests'),
                   onTap: () async {
-                    await Navigator.of(context)
+                    await await Navigator.of(context)
                         .push(MaterialPageRoute(
                         builder: (context) {
-                          return Request(userID:widget.ID);
+                          return Request(userID:widget.ID,camera:widget.camera);
                         }));
                   },
                 ),
@@ -445,13 +445,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   onTap: () async {
                     await Navigator.of(context)
                         .push(MaterialPageRoute(builder: (context) {
-                      return Ratings(ID:widget.ID);
+                      return Ratings(ID:widget.ID,camera:widget.camera);
                     }));
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.edit),
-                  title: Text('Editable'),
+                  title: Text('Requests'),
                   onTap: () async {
                     await Navigator.of(context)
                         .push(MaterialPageRoute(builder: (context) {
@@ -466,7 +466,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     await Navigator.of(context)
                         .push(MaterialPageRoute(
                     builder: (context) {
-                    return NotificationLister();
+                    return NotificationLister(camera:widget.camera);
                 }));
                 },
     ),

@@ -1,12 +1,19 @@
+import 'package:camera_platform_interface/src/types/camera_description.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:se380_unique/PetSitterHome.dart';
 import 'dart:io';
+
+import 'Edit_Profile.dart';
+import 'Notifications.dart';
+import 'RequestPage.dart';
 
 class Ratings extends StatefulWidget {
   var ID;
+  final CameraDescription camera;
 
-   Ratings({this.ID,Key key}) : super(key: key);
+   Ratings({this.ID,Key key,this.camera}) : super(key: key);
 
   @override
   _RatingsState createState() => _RatingsState();
@@ -80,7 +87,69 @@ class _RatingsState extends State<Ratings> {
           ],
         ),
       ),
-    );
+    endDrawer: Drawer(
+    child: Drawer(
+    // Add a ListView to the drawer. This ensures the user can scroll
+    // through the options in the drawer if there isn't enough vertical
+    // space to fit everything.
+    child: ListView(
+      // Important: Remove any padding from the ListView.
+      padding: EdgeInsets.zero,
+      children: <Widget>[
+        DrawerHeader(
+          decoration: BoxDecoration(
+            color: Colors.blue[200],
+          ),
+          child: Text('Ratings'),
+        ),
+        ListTile(
+          leading: Icon(Icons.home_filled),
+          title: Text('Home'),
+          onTap: () async {
+            await Navigator.of(context)
+                .push(MaterialPageRoute(
+                builder: (context) {
+                  return MyHomePage(title: "Pet Sitter Home Page",ID:widget.ID,camera:widget.camera);
+                }));
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.app_settings_alt_sharp),
+          title: Text('Requests'),
+          onTap: () async {
+            await await Navigator.of(context)
+                .push(MaterialPageRoute(
+                builder: (context) {
+                  return Request(userID:widget.ID,camera:widget.camera);
+                }));
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.edit),
+          title: Text('Editable'),
+          onTap: () async {
+            await Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) {
+              return Editable(docID:widget.ID,camera: widget.camera);
+            }));
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.comment),
+          title: Text('Nofitications'),
+          onTap: () async {
+            await Navigator.of(context)
+                .push(MaterialPageRoute(
+                builder: (context) {
+                  return NotificationLister(camera:widget.camera);
+                }));
+          },
+        ),
+
+      ],
+    ),
+    )
+    ));
   }
 }
 
