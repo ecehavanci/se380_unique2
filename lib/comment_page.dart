@@ -73,7 +73,7 @@ class _RatingsState extends State<Ratings> {
             ),
             Expanded(
                 flex: 3,
-                child: UserInformation()//CommentsList(names: names, stars: stars, comments: comments)
+                child: UserInformation(ID:widget.ID)//CommentsList(names: names, stars: stars, comments: comments)
             ),
             Column(),
             Row(),
@@ -148,12 +148,23 @@ class CommentsList extends StatelessWidget {
 }
 
 class UserInformation extends StatefulWidget {
+  var ID;
+
+  UserInformation({this.ID});
+
   @override
   _UserInformationState createState() => _UserInformationState();
 }
 
 class _UserInformationState extends State<UserInformation> {
-  final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance.collection("PetSitters").doc("NLZrkcuuqHgW4HhoRBQ8DEFF9Xc2").collection("comments").snapshots();
+  Stream<QuerySnapshot> _usersStream;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+     _usersStream = FirebaseFirestore.instance.collection("PetSitters").doc(widget.ID).collection("Comments").snapshots();
+  }
 
   @override
   Widget build(BuildContext context) {
