@@ -34,6 +34,132 @@ class PetOwnerHomePage extends StatelessWidget {
 }
 
 
+final fiveStars = Container(
+    child: Row(
+      children: [
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+      ],
+    ));
+final fourStars = Container(
+    child: Row(
+      children: [
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 35,
+        ),
+      ],
+    ));
+final threeStars = Container(
+    child: Row(
+      children: [
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 35,
+        ),
+      ],
+    ));
+final twoStars = Container(
+    child: Row(
+      children: [
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 35,
+        ),
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 35,
+        ),
+      ],
+    ));
+
+
+
+
+
+
 
 
 class UserProfile extends StatefulWidget {
@@ -63,10 +189,15 @@ class PetOwner extends StatefulWidget {
 }
 
 class _PetOwnerState extends State<PetOwner> {
-
   final commentController= TextEditingController();
    String petName;
    int selectedItemIndex=0;
+
+  bool isOne=false;
+  bool isTwo=false;
+  bool isThree=false;
+  bool isFour=false;
+  bool isFive=false;
 
    String petOwnerName;
    String petOwnerSurname;
@@ -76,6 +207,8 @@ class _PetOwnerState extends State<PetOwner> {
      setState(() {
        selectedItemIndex=index;
      });
+
+
      /*selectedItemIndex==1 && ModalRoute.of(context).settings.name!='LookForPetSitters'?Navigator.of(context).push(MaterialPageRoute(
          builder: (context){
            return LookForPetSitters();
@@ -91,6 +224,8 @@ class _PetOwnerState extends State<PetOwner> {
      print('no action available');*/
 
    }
+
+   int starCount=0;
 
   @override
   Widget build(BuildContext context) {
@@ -286,84 +421,190 @@ class _PetOwnerState extends State<PetOwner> {
                                       onPressed: (){showDialog(barrierDismissible: true,context: context, builder: (context){
                                         return AlertDialog(
                                           backgroundColor: Colors.amber[200],
-                                          content: Container(
-                                            height: 400,
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [Text(petSitterDoc['name']+' '+petSitterDoc['surname'], style : TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                                                Text('Living Area: '+petSitterDoc['address'],   ),
+                                          content: SingleChildScrollView(
+                                            child: Container(
+                                              height: 450,
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [Text(petSitterDoc['name']+' '+petSitterDoc['surname'], style : TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                                                  Text('Living Area: '+petSitterDoc['address'],   ),
 
-                                                StreamBuilder<QuerySnapshot>(
-                                                    stream: FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Comments').snapshots(),
-                                                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> commentsSnapshot){
+                                                  StreamBuilder<QuerySnapshot>(
+                                                      stream: FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Comments').snapshots(),
+                                                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> commentsSnapshot){
 
-                                                      if(!commentsSnapshot.hasData){
-                                                        return Container(
-                                                            alignment: Alignment.center,
-                                                            child: CircularProgressIndicator()
-                                                        );
-                                                      }
-                                                      if(commentsSnapshot.data.docs.length>0){
-                                                          return Directionality(
-                                                            textDirection: TextDirection.ltr,
-                                                            child: Container(
-                                                              height: 300,
-                                                              width: 200,
-                                                                child: ListView(children: commentsSnapshot.data.docs.map((doc) =>
-                                                                    Card(
-                                                                      color: Colors.yellow[100],
-                                                                      child: ListTile(
-                                                                        title: Text(doc['comment maker\'s name']),
-                                                                        subtitle: Text(doc['star'].toString()+'\n '+doc['comment']),
-                                                                      ),
+                                                        if(!commentsSnapshot.hasData){
+                                                          return Container(
+                                                              alignment: Alignment.center,
+                                                              child: CircularProgressIndicator()
+                                                          );
+                                                        }
+                                                        if(commentsSnapshot.data.docs.length>0){
+                                                            return Directionality(
+                                                              textDirection: TextDirection.ltr,
+                                                              child: Container(
+                                                                height: 300,
+                                                                width: 200,
+                                                                  child: ListView(children: commentsSnapshot.data.docs.map((doc) =>
+                                                                      Card(
+                                                                        color: Colors.yellow[100],
+                                                                        child: ListTile(
+                                                                          title: Text(doc['comment maker\'s name']),
+                                                                          subtitle: Text(doc['star'].toString()+'\n '+doc['comment']),
+                                                                        ),
 
-                                                                    )
-                                                                ).toList()
-                                                            ),
-                                                          ));
-                                                      }
-                                                      return Text('There is no comment for that pet sitter. Be the first one to comment.');
-                                                      }),
-
-                                                      Row(
-                                                        children: [Container(
-                                                          height: 50,
-                                                          width: 150,
-                                                          child: Form(
-                                                            child: TextField(
-                                                              maxLines: null,
-                                                                controller: commentController,
-                                                                style: TextStyle(fontSize: 14),
-                                                                decoration: InputDecoration(
-                                                                    hintText: 'Enter your comment here'
-                                                                )
-                                                            )
-                                                          ),
-                                                        ),
+                                                                      )
+                                                                  ).toList()
+                                                              ),
+                                                            ));
+                                                        }
+                                                        return Text('There is no comment for that pet sitter. Be the first one to comment.');
+                                                        }),
+                                                  Container(
+                                                    alignment: Alignment.center,
+                                                      child: Row(
+                                                        children: [
                                                           Container(
-                                                            alignment: Alignment.centerLeft,
-                                                              height: 35,
-                                                              width: 60,
-                                                              child: ElevatedButton(onPressed: () async{
-                                                                var petOwnerDoc= FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID);
-                                                                DocumentSnapshot snap = await petOwnerDoc.get();
-                                                                Map<String, dynamic> petOwnerData = snap.data();
-                                                                print('elevated button pressed');
-                                                                FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Comments').add({
-                                                                  'comment' : commentController.text.toString(),
-                                                                  'comment maker\'s name' : petOwnerData['name']+' '+ petOwnerData['surname'],
-                                                                  'star': 3,
-                                                                }
-                                                                );
-                                                              }, child: Icon(Icons.check, ))
+                                                            width: 20,
+                                                            child: IconButton(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  starCount=1;
+                                                                  isOne=true;
+                                                                  isTwo=false;
+                                                                  isThree=false;
+                                                                  isFour=false;
+                                                                  isFive=false;
+                                                                });
+                                                              },
+                                                              icon: Icon(
+                                                                isOne?Icons.star:Icons.star_outline,
+                                                                color: Colors.red,
+                                                                size: 20,
+                                                              ),
+                                                            ),
                                                           ),
-                                                        ]
-                                                      ),
+                                                          Container(
+                                                            width: 20,
+                                                            child: IconButton(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  starCount=2;
+                                                                  isOne=true;
+                                                                  isTwo=true;
+                                                                  isThree=false;
+                                                                  isFour=false;
+                                                                  isFive=false;
+                                                                });
+                                                              },
+                                                              icon:  Icon(
+                                                                isOne&&isTwo?Icons.star: Icons.star_outline,
+                                                                color: Colors.red,
+                                                                size: 20,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            width: 20,
+                                                            child: IconButton(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  starCount=3;
+                                                                  isOne=true;
+                                                                  isTwo=true;
+                                                                  isThree=true;
+                                                                  isFour=false;
+                                                                  isFive=false;
+                                                                });
+                                                              },
+                                                              icon:  Icon(
+                                                                isOne&&isTwo&&isThree?Icons.star:Icons.star_outline,
+                                                                color: Colors.red,
+                                                                size: 20,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            width: 20,
+                                                            child: IconButton(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  starCount=4;
+                                                                  isOne=true;
+                                                                  isTwo=true;
+                                                                  isThree=true;
+                                                                  isFour=true;
+                                                                  isFive=false;
+                                                                });
+                                                              },
+                                                              icon:   Icon(
+                                                                isOne&&isTwo&&isThree&&isFour?Icons.star:Icons.star_outline,
+                                                                color: Colors.red,
+                                                                size: 20,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            width: 20,
+                                                            child: IconButton(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  starCount=5;
+                                                                  isOne=true;
+                                                                  isTwo=true;
+                                                                  isThree=true;
+                                                                  isFour=true;
+                                                                  isFive=true;
+                                                                });
+                                                              },
+                                                              icon:  Icon(
+                                                                isOne&&isTwo&&isThree&&isFour&&isFive?Icons.star:Icons.star_outline,
+                                                                color: Colors.red,
+                                                                size: 20,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )),
 
 
-
-                                              ],
+                                                        Row(
+                                                          children: [Container(
+                                                            height: 50,
+                                                            width: 150,
+                                                            child: Form(
+                                                              child: TextField(
+                                                                maxLines: null,
+                                                                  controller: commentController,
+                                                                  style: TextStyle(fontSize: 14),
+                                                                  decoration: InputDecoration(
+                                                                      hintText: 'Enter your comment here'
+                                                                  )
+                                                              )
+                                                            ),
+                                                          ),
+                                                            Container(
+                                                              alignment: Alignment.centerLeft,
+                                                                height: 35,
+                                                                width: 60,
+                                                                child: ElevatedButton(onPressed: () async{
+                                                                  var petOwnerDoc= FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID);
+                                                                  DocumentSnapshot snap = await petOwnerDoc.get();
+                                                                  Map<String, dynamic> petOwnerData = snap.data();
+                                                                  print('elevated button pressed');
+                                                                  FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Comments').add({
+                                                                    'comment' : commentController.text.toString(),
+                                                                    'comment maker\'s name' : petOwnerData['name']+' '+ petOwnerData['surname'],
+                                                                    'star': this.starCount,
+                                                                  }
+                                                                  );
+                                                                }, child: Icon(Icons.check, ))
+                                                            ),
+                                                          ]
+                                                        ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                           actions: [TextButton(onPressed: () async{
@@ -396,7 +637,8 @@ class _PetOwnerState extends State<PetOwner> {
                                                                     var col = FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Request');
                                                                     print(petSitterDoc.id);
                                                                     col.add(
-                                                                        {'Request Letter':petOwnerData['name'].toString()+ ' ' + petOwnerData['surname'].toString()+' would like to hire you for '+ petDoc['Name'].toString()+ '.\n'
+                                                                        {'Request maker\'s name': petOwnerData['name'].toString(),
+                                                                          'Request Letter':petOwnerData['name'].toString()+ ' ' + petOwnerData['surname'].toString()+' would like to hire you for '+ petDoc['Name'].toString()+ '.\n'
                                                                             'It is a '+petDoc['Breed'].toString()+' and lives in '+petDoc['Living Area'].toString()+ '. Do you accept?'});
                                                                     Navigator.pop(context);
                                                                     },
