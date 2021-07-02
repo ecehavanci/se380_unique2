@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:se380_unique/camera.dart';
+import 'package:se380_unique/sign.dart';
 import 'Notifications.dart';
 import 'PetSitterHome.dart';
 import 'comment_page.dart';
@@ -319,6 +320,16 @@ class _EditableState extends State<Editable> {
                 builder: (context) {
                   return NotificationLister(camera:widget.camera);
                 }));
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.exit_to_app),
+          title: Text('Exit'),
+          onTap: () async {
+            await Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) {
+              return SignUpChooser(camera:widget.camera);
+            }));
           },
         ),
 

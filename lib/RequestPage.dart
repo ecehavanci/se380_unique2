@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:se380_unique/sign.dart';
 
 import 'Edit_Profile.dart';
 import 'Notifications.dart';
@@ -22,6 +23,7 @@ class _RequestState extends State<Request> {
   QuerySnapshot qsnap;
   var requestcol;
   var _usersStream;
+  String reqmakerName;
 
 
 @override
@@ -71,7 +73,8 @@ class _RequestState extends State<Request> {
             return new ListView(
               children: snapshot.data.docs.map((DocumentSnapshot document) {
                 Map<String, dynamic> data = document.data();
-                var ss=snapshot.data.docs.length;
+                var ssLength=snapshot.data.docs.length;
+                RequestMakergetData(document);
 
                 return new ListTile(
                   title: SingleChildScrollView(
@@ -98,7 +101,7 @@ class _RequestState extends State<Request> {
                                 child: FloatingActionButton.extended(
                                   onPressed: () async {
                                     setState(() {
-                                      counter=ss;
+                                      counter=ssLength;
                                       counter = (counter - 1);
                                     });
                                     await FirebaseFirestore.instance.collection('PetSitters').doc(widget.userID).collection("Request").doc(document.id).delete();
@@ -107,7 +110,7 @@ class _RequestState extends State<Request> {
                                       context: context,
                                       builder: (BuildContext context) => AlertDialog(
                                         title: const Text('Accept Information'),
-                                        content: const Text('Your phone number has been sent to..'),
+                                        content:  Text('Your phone number has been sent to '+reqmakerName),
                                         actions: <Widget>[
                                           TextButton(
                                             onPressed: () => Navigator.pop(context, 'Cancel'),
@@ -133,7 +136,7 @@ class _RequestState extends State<Request> {
                                 child: FloatingActionButton.extended(
                                   onPressed: () async {
                                     setState(() {
-                                      counter=ss;
+                                      counter=ssLength;
                                       counter = (counter - 1);
                                     });
                                     await FirebaseFirestore.instance.collection('PetSitters').doc(widget.userID).collection("Request").doc(document.id).delete();
@@ -212,11 +215,30 @@ class _RequestState extends State<Request> {
                 }));
           },
         ),
+        ListTile(
+          leading: Icon(Icons.exit_to_app),
+          title: Text('Exit'),
+          onTap: () async {
+            await Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) {
+              return SignUpChooser(camera:widget.camera);
+            }));
+          },
+        ),
 
       ],
     ),
     )
     )
     );
+  }
+
+  Future<void> RequestMakergetData(DocumentSnapshot document) async {
+    DocumentReference doc=FirebaseFirestore.instance.collection('PetSitters').doc(widget.userID).collection("Request").doc(document.id);
+    DocumentSnapshot docrequest = await doc.get();
+    Map<String, dynamic> datarequest=docrequest.data();
+    setState(() {
+      reqmakerName=datarequest["Request maker's name"];
+    });
   }
 }

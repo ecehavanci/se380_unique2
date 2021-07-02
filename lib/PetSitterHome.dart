@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:se380_unique/sign.dart';
 import 'Edit_Profile.dart';
 import 'Notifications.dart';
 import 'RequestPage.dart';
@@ -468,8 +469,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     builder: (context) {
                     return NotificationLister(camera:widget.camera);
                 }));
-                },
-    ),
+                            },
+                ),
+                ListTile(
+                              leading: Icon(Icons.exit_to_app),
+                              title: Text('Exit'),
+                              onTap: () async {
+                                await Navigator.of(context)
+                                    .push(MaterialPageRoute(builder: (context) {
+                                  return SignUpChooser(camera:widget.camera);
+                                }));
+                              },
+                            ),
 
               ],
             ),
