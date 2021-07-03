@@ -2,6 +2,8 @@ import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:se380_unique/camera.dart';
+import 'Notifications.dart';
+import 'PetSitterHome.dart';
 import 'comment_page.dart';
 import 'dart:async';
 import 'dart:io';
@@ -262,7 +264,67 @@ class _EditableState extends State<Editable> {
               ],
             ),
           ),
-        ));
+        ),endDrawer: Drawer(
+    child: Drawer(
+    // Add a ListView to the drawer. This ensures the user can scroll
+    // through the options in the drawer if there isn't enough vertical
+    // space to fit everything.
+    child: ListView(
+      // Important: Remove any padding from the ListView.
+      padding: EdgeInsets.zero,
+      children: <Widget>[
+        DrawerHeader(
+          decoration: BoxDecoration(
+            color: Colors.blue[200],
+          ),
+          child: Text('Editable'),
+        ),
+        ListTile(
+          leading: Icon(Icons.home_filled),
+          title: Text('Home'),
+          onTap: () async {
+            await Navigator.of(context)
+                .push(MaterialPageRoute(
+                builder: (context) {
+                  return MyHomePage(title: "Pet Sitter Home Page",ID:widget.docID,camera:widget.camera);
+                }));
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.stacked_line_chart_outlined),
+          title: Text('Ratings'),
+          onTap: () async {
+            await Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) {
+              return Ratings(ID:widget.docID,camera:widget.camera);
+            }));
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.edit),
+          title: Text('Requests'),
+          onTap: () async {
+            await Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) {
+              return Editable(docID:widget.docID,camera: widget.camera);
+            }));
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.comment),
+          title: Text('Nofitications'),
+          onTap: () async {
+            await Navigator.of(context)
+                .push(MaterialPageRoute(
+                builder: (context) {
+                  return NotificationLister(camera:widget.camera);
+                }));
+          },
+        ),
+
+      ],
+    ),
+    )));
 
   }
   TextButton buildTextButton(String day) {

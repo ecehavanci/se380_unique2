@@ -1,9 +1,10 @@
+import 'package:camera_platform_interface/src/types/camera_description.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 
 class NotificationLister extends StatelessWidget {
-  const NotificationLister({Key key}) : super(key: key);
+  const NotificationLister({Key key, CameraDescription camera}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,7 @@ class NotificationLister extends StatelessWidget {
                 );
         },
         )
-        )
+        ),
     );
   }
 }
