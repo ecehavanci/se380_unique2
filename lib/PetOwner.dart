@@ -227,6 +227,20 @@ class _PetOwnerState extends State<PetOwner> {
 
    int starCount=0;
 
+   @override
+  void initState() {
+    setState(() {
+      isOne=false;
+      isTwo=false;
+      isThree=false;
+      isFour=false;
+      isFive=false;
+    });
+
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -270,7 +284,7 @@ class _PetOwnerState extends State<PetOwner> {
                         else {
                           return
                             Text( snapshot.data['name'].toString()+' '+snapshot.data['surname'].toString(), style: new TextStyle(fontSize: 25, color: const Color(
-                              0xFF86351C), fontWeight: FontWeight.bold));
+                            0xFF86351C), fontWeight: FontWeight.bold));
                         }
                       }
                       )
@@ -279,6 +293,35 @@ class _PetOwnerState extends State<PetOwner> {
                   ),
                 ),
             ), flex: 2,),
+
+            Expanded(
+              flex: 2,
+              child: SizedBox(
+                width:300,
+                height: 80,
+                child: Row(
+                  children: [
+                    Text('Address: ', style: new TextStyle(fontSize: 25, color: const Color(
+                        0xFF550000), fontWeight: FontWeight.bold), ),
+
+                    StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID).snapshots(),
+                        builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+
+                          if (!snapshot.hasData) {
+                            return  Text('Loading...' , style: new TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold));
+                          }
+                          else {
+                            return
+                              Text( snapshot.data['address'].toString(), style: new TextStyle(fontSize: 25, color: const Color(
+                                  0xFF86351C), fontWeight: FontWeight.bold));
+                          }
+                        }
+                    ),
+                  ],
+                ),
+              ),
+            ),
             Expanded(
               child: SizedBox(
                   width:300,
@@ -324,63 +367,6 @@ class _PetOwnerState extends State<PetOwner> {
                   ])
               ), flex: 2,
             ),
-
-
-            Expanded(
-              flex:2,
-              child: Container(
-                alignment: Alignment.center,
-                child: SizedBox(
-                height: 70,
-                width: 380,
-                child: ElevatedButton (
-                  style: ElevatedButton.styleFrom(
-                    primary: const Color(0xFFFF7252),
-                    onPrimary: const Color(0xFF740000),
-                    shadowColor: const Color(0xFF320000),
-                  ), onPressed: () {  },
-                  child: Text('Last hired pet sitters', style: new TextStyle(fontSize:30)),
-
-                ),
-            ),
-              ),
-            ),
-             Expanded(
-               flex:2,
-              child:
-                Container(
-                  alignment: Alignment.topCenter,
-                  child: SizedBox(
-                    height: 70,
-                    width: 380,
-                    child: ElevatedButton (
-                      style: ElevatedButton.styleFrom(
-                        primary: const Color(0xFF00CE8D),
-                        onPrimary: const Color(0xFF004DB4),
-                      ), onPressed: () async{ /*Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context){
-                          return SignUpChooser();
-                        }
-                    )); */
-                      /*var doc =FirebaseFirestore.instance.collection('PetOwners').
-                      doc(widget.userID);
-
-                      var docSnap = await doc.get();
-
-                      var data = docSnap.data();
-
-                      print([data['name']]);
-                      setState(() {
-                        username =data['name'];
-                      });
-                      print(username);*/
-                    },
-                      child: Text('Favourite pet sitters', style: new TextStyle(fontSize:30)),
-
-                    ),
-                  ),
-                ),
-              ),
           ],
         ),
       )
@@ -418,242 +404,247 @@ class _PetOwnerState extends State<PetOwner> {
                                     width: 80,
                                     child: ElevatedButton(
                                       child:Text('Details'),
-                                      onPressed: (){showDialog(barrierDismissible: true,context: context, builder: (context){
-                                        return AlertDialog(
-                                          backgroundColor: Colors.amber[200],
-                                          content: SingleChildScrollView(
-                                            child: Container(
-                                              height: 450,
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [Text(petSitterDoc['name']+' '+petSitterDoc['surname'], style : TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                                                  Text('Living Area: '+petSitterDoc['address'],   ),
+                                      onPressed: (){
+                                        showDialog(barrierDismissible: true,context: context, builder: (context){
+                                        return StatefulBuilder(
+                                          builder: (context, setState) {
+                                            return AlertDialog(
+                                              backgroundColor: Colors.amber[200],
+                                              content: SingleChildScrollView(
+                                                child: Container(
+                                                  height: 450,
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [Text(petSitterDoc['name']+' '+petSitterDoc['surname'], style : TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                                                      Text('Living Area: '+petSitterDoc['address'],   ),
 
-                                                  StreamBuilder<QuerySnapshot>(
-                                                      stream: FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Comments').snapshots(),
-                                                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> commentsSnapshot){
+                                                      StreamBuilder<QuerySnapshot>(
+                                                          stream: FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Comments').snapshots(),
+                                                          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> commentsSnapshot){
 
-                                                        if(!commentsSnapshot.hasData){
-                                                          return Container(
-                                                              alignment: Alignment.center,
-                                                              child: CircularProgressIndicator()
-                                                          );
+                                                            if(!commentsSnapshot.hasData){
+                                                              return Container(
+                                                                  alignment: Alignment.center,
+                                                                  child: CircularProgressIndicator()
+                                                              );
+                                                            }
+                                                            if(commentsSnapshot.data.docs.length>0){
+                                                                return Directionality(
+                                                                  textDirection: TextDirection.ltr,
+                                                                  child: Container(
+                                                                    height: 300,
+                                                                    width: 200,
+                                                                      child: ListView(children: commentsSnapshot.data.docs.map((doc) =>
+                                                                          Card(
+                                                                            color: Colors.yellow[100],
+                                                                            child: ListTile(
+                                                                              title: Text(doc['comment maker\'s name']),
+                                                                              subtitle: Text(doc['star'].toString()+'\n '+doc['comment']),
+                                                                            ),
+
+                                                                          )
+                                                                      ).toList()
+                                                                  ),
+                                                                ));
+                                                            }
+                                                            return Text('There is no comment for that pet sitter. Be the first one to comment.');
+                                                            }),
+                                                      Container(
+                                                        alignment: Alignment.center,
+                                                          child: Row(
+                                                            children: [
+                                                              Container(
+                                                                width: 20,
+                                                                child: IconButton(
+                                                                  onPressed: () {
+                                                                    setState(() {
+                                                                      starCount=1;
+                                                                      isOne=true;
+                                                                      isTwo=false;
+                                                                      isThree=false;
+                                                                      isFour=false;
+                                                                      isFive=false;
+                                                                    });
+                                                                  },
+                                                                  icon: Icon(
+                                                                    isOne?Icons.star:Icons.star_outline,
+                                                                    color: Colors.red,
+                                                                    size: 20,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                width: 20,
+                                                                child: IconButton(
+                                                                  onPressed: () {
+                                                                    setState(() {
+                                                                      starCount=2;
+                                                                      isOne=true;
+                                                                      isTwo=true;
+                                                                      isThree=false;
+                                                                      isFour=false;
+                                                                      isFive=false;
+                                                                    });
+                                                                  },
+                                                                  icon:  Icon(
+                                                                    isOne&&isTwo?Icons.star: Icons.star_outline,
+                                                                    color: Colors.red,
+                                                                    size: 20,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                width: 20,
+                                                                child: IconButton(
+                                                                  onPressed: () {
+                                                                    setState(() {
+                                                                      starCount=3;
+                                                                      isOne=true;
+                                                                      isTwo=true;
+                                                                      isThree=true;
+                                                                      isFour=false;
+                                                                      isFive=false;
+                                                                    });
+                                                                  },
+                                                                  icon:  Icon(
+                                                                    isOne&&isTwo&&isThree?Icons.star:Icons.star_outline,
+                                                                    color: Colors.red,
+                                                                    size: 20,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                width: 20,
+                                                                child: IconButton(
+                                                                  onPressed: () {
+                                                                    setState(() {
+                                                                      starCount=4;
+                                                                      isOne=true;
+                                                                      isTwo=true;
+                                                                      isThree=true;
+                                                                      isFour=true;
+                                                                      isFive=false;
+                                                                    });
+                                                                  },
+                                                                  icon:   Icon(
+                                                                    isOne&&isTwo&&isThree&&isFour?Icons.star:Icons.star_outline,
+                                                                    color: Colors.red,
+                                                                    size: 20,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                width: 20,
+                                                                child: IconButton(
+                                                                  onPressed: () {
+                                                                    setState(() {
+                                                                      starCount=5;
+                                                                      isOne=true;
+                                                                      isTwo=true;
+                                                                      isThree=true;
+                                                                      isFour=true;
+                                                                      isFive=true;
+                                                                    });
+                                                                  },
+                                                                  icon:  Icon(
+                                                                    isOne&&isTwo&&isThree&&isFour&&isFive?Icons.star:Icons.star_outline,
+                                                                    color: Colors.red,
+                                                                    size: 20,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          )),
+
+
+                                                            Row(
+                                                              children: [Container(
+                                                                height: 50,
+                                                                width: 150,
+                                                                child: Form(
+                                                                  child: TextField(
+                                                                    maxLines: null,
+                                                                      controller: commentController,
+                                                                      style: TextStyle(fontSize: 14),
+                                                                      decoration: InputDecoration(
+                                                                          hintText: 'Enter your comment here'
+                                                                      )
+                                                                  )
+                                                                ),
+                                                              ),
+                                                                Container(
+                                                                  alignment: Alignment.centerLeft,
+                                                                    height: 35,
+                                                                    width: 60,
+                                                                    child: ElevatedButton(onPressed: () async{
+                                                                      var petOwnerDoc= FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID);
+                                                                      DocumentSnapshot snap = await petOwnerDoc.get();
+                                                                      Map<String, dynamic> petOwnerData = snap.data();
+                                                                      print('elevated button pressed');
+                                                                      FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Comments').add({
+                                                                        'comment' : commentController.text.toString(),
+                                                                        'comment maker\'s name' : petOwnerData['name']+' '+ petOwnerData['surname'],
+                                                                        'star': this.starCount,
+                                                                      }
+                                                                      );
+                                                                    }, child: Icon(Icons.check, ))
+                                                                ),
+                                                              ]
+                                                            ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              actions: [TextButton(onPressed: () async{
+                                              var petOwnerDoc= FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID);
+                                              DocumentSnapshot snap = await petOwnerDoc.get();
+
+
+                                              showDialog(barrierDismissible: true,context: context, builder: (context){
+                                                return AlertDialog(
+                                                  content: Text('For which pet would you like to hire?'),
+                                                  actions: [StreamBuilder<QuerySnapshot>(
+                                                      stream: FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID).collection('Pets').snapshots(),
+                                                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> petSnap) {
+                                                        if (!petSnap.hasData) {
+                                                          return  Text('Loading...' , style: new TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold));
                                                         }
-                                                        if(commentsSnapshot.data.docs.length>0){
-                                                            return Directionality(
+                                                        else {
+                                                          return  Directionality(
                                                               textDirection: TextDirection.ltr,
                                                               child: Container(
-                                                                height: 300,
-                                                                width: 200,
-                                                                  child: ListView(children: commentsSnapshot.data.docs.map((doc) =>
-                                                                      Card(
-                                                                        color: Colors.yellow[100],
-                                                                        child: ListTile(
-                                                                          title: Text(doc['comment maker\'s name']),
-                                                                          subtitle: Text(doc['star'].toString()+'\n '+doc['comment']),
-                                                                        ),
+                                                                alignment: Alignment.center,
+                                                                height: 40,
+                                                                width: 300,
+                                                                child: ListView(
 
-                                                                      )
-                                                                  ).toList()
-                                                              ),
-                                                            ));
-                                                        }
-                                                        return Text('There is no comment for that pet sitter. Be the first one to comment.');
-                                                        }),
-                                                  Container(
-                                                    alignment: Alignment.center,
-                                                      child: Row(
-                                                        children: [
-                                                          Container(
-                                                            width: 20,
-                                                            child: IconButton(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  starCount=1;
-                                                                  isOne=true;
-                                                                  isTwo=false;
-                                                                  isThree=false;
-                                                                  isFour=false;
-                                                                  isFive=false;
-                                                                });
-                                                              },
-                                                              icon: Icon(
-                                                                isOne?Icons.star:Icons.star_outline,
-                                                                color: Colors.red,
-                                                                size: 20,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Container(
-                                                            width: 20,
-                                                            child: IconButton(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  starCount=2;
-                                                                  isOne=true;
-                                                                  isTwo=true;
-                                                                  isThree=false;
-                                                                  isFour=false;
-                                                                  isFive=false;
-                                                                });
-                                                              },
-                                                              icon:  Icon(
-                                                                isOne&&isTwo?Icons.star: Icons.star_outline,
-                                                                color: Colors.red,
-                                                                size: 20,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Container(
-                                                            width: 20,
-                                                            child: IconButton(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  starCount=3;
-                                                                  isOne=true;
-                                                                  isTwo=true;
-                                                                  isThree=true;
-                                                                  isFour=false;
-                                                                  isFive=false;
-                                                                });
-                                                              },
-                                                              icon:  Icon(
-                                                                isOne&&isTwo&&isThree?Icons.star:Icons.star_outline,
-                                                                color: Colors.red,
-                                                                size: 20,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Container(
-                                                            width: 20,
-                                                            child: IconButton(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  starCount=4;
-                                                                  isOne=true;
-                                                                  isTwo=true;
-                                                                  isThree=true;
-                                                                  isFour=true;
-                                                                  isFive=false;
-                                                                });
-                                                              },
-                                                              icon:   Icon(
-                                                                isOne&&isTwo&&isThree&&isFour?Icons.star:Icons.star_outline,
-                                                                color: Colors.red,
-                                                                size: 20,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Container(
-                                                            width: 20,
-                                                            child: IconButton(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  starCount=5;
-                                                                  isOne=true;
-                                                                  isTwo=true;
-                                                                  isThree=true;
-                                                                  isFour=true;
-                                                                  isFive=true;
-                                                                });
-                                                              },
-                                                              icon:  Icon(
-                                                                isOne&&isTwo&&isThree&&isFour&&isFive?Icons.star:Icons.star_outline,
-                                                                color: Colors.red,
-                                                                size: 20,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      )),
-
-
-                                                        Row(
-                                                          children: [Container(
-                                                            height: 50,
-                                                            width: 150,
-                                                            child: Form(
-                                                              child: TextField(
-                                                                maxLines: null,
-                                                                  controller: commentController,
-                                                                  style: TextStyle(fontSize: 14),
-                                                                  decoration: InputDecoration(
-                                                                      hintText: 'Enter your comment here'
-                                                                  )
+                                                                    scrollDirection:Axis.horizontal,
+                                                                    shrinkWrap: true,
+                                                                    children: petSnap.data.docs.map((petDoc) =>
+                                                                        TextButton(onPressed: () { Map<String, dynamic> petOwnerData = snap.data();
+                                                                        var col = FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Request');
+                                                                        print(petSitterDoc.id);
+                                                                        col.add(
+                                                                            {'Request maker\'s name': petOwnerData['name'].toString()+' '+petOwnerData['name'].toString(),
+                                                                              'Request Letter':petOwnerData['name'].toString()+ ' ' + petOwnerData['surname'].toString()+' would like to hire you for '+ petDoc['Name'].toString()+ '.\n'
+                                                                                'It is a '+petDoc['Breed'].toString()+' and lives in '+petDoc['Living Area'].toString()+ '. Do you accept?'});
+                                                                        Navigator.pop(context);
+                                                                        },
+                                                                          child: Text(petDoc['Name']),)).toList()
+                                                                ),
                                                               )
-                                                            ),
-                                                          ),
-                                                            Container(
-                                                              alignment: Alignment.centerLeft,
-                                                                height: 35,
-                                                                width: 60,
-                                                                child: ElevatedButton(onPressed: () async{
-                                                                  var petOwnerDoc= FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID);
-                                                                  DocumentSnapshot snap = await petOwnerDoc.get();
-                                                                  Map<String, dynamic> petOwnerData = snap.data();
-                                                                  print('elevated button pressed');
-                                                                  FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Comments').add({
-                                                                    'comment' : commentController.text.toString(),
-                                                                    'comment maker\'s name' : petOwnerData['name']+' '+ petOwnerData['surname'],
-                                                                    'star': this.starCount,
-                                                                  }
-                                                                  );
-                                                                }, child: Icon(Icons.check, ))
-                                                            ),
-                                                          ]
-                                                        ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          actions: [TextButton(onPressed: () async{
-                                          var petOwnerDoc= FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID);
-                                          DocumentSnapshot snap = await petOwnerDoc.get();
+                                                          );
+
+                                                        }})],
+                                                );
+                                              }
+                                              );
 
 
-                                          showDialog(barrierDismissible: true,context: context, builder: (context){
-                                            return AlertDialog(
-                                              content: Text('For which pet would you like to hire?'),
-                                              actions: [StreamBuilder<QuerySnapshot>(
-                                                  stream: FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID).collection('Pets').snapshots(),
-                                                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> petSnap) {
-                                                    if (!petSnap.hasData) {
-                                                      return  Text('Loading...' , style: new TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold));
-                                                    }
-                                                    else {
-                                                      return  Directionality(
-                                                          textDirection: TextDirection.ltr,
-                                                          child: Container(
-                                                            alignment: Alignment.center,
-                                                            height: 40,
-                                                            width: 300,
-                                                            child: ListView(
-
-                                                                scrollDirection:Axis.horizontal,
-                                                                shrinkWrap: true,
-                                                                children: petSnap.data.docs.map((petDoc) =>
-                                                                    TextButton(onPressed: () { Map<String, dynamic> petOwnerData = snap.data();
-                                                                    var col = FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Request');
-                                                                    print(petSitterDoc.id);
-                                                                    col.add(
-                                                                        {'Request maker\'s name': petOwnerData['name'].toString(),
-                                                                          'Request Letter':petOwnerData['name'].toString()+ ' ' + petOwnerData['surname'].toString()+' would like to hire you for '+ petDoc['Name'].toString()+ '.\n'
-                                                                            'It is a '+petDoc['Breed'].toString()+' and lives in '+petDoc['Living Area'].toString()+ '. Do you accept?'});
-                                                                    Navigator.pop(context);
-                                                                    },
-                                                                      child: Text(petDoc['Name']),)).toList()
-                                                            ),
-                                                          )
-                                                      );
-
-                                                    }})],
+                                            }, child: Text('Hire'))],
                                             );
                                           }
-                                          );
-
-
-                                        }, child: Text('Hire'))],
                                         );
                                       }
                                       );
@@ -687,10 +678,33 @@ class _PetOwnerState extends State<PetOwner> {
             label: 'Look For Pet Sitters',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings, size: 40),
+            icon: Icon(Icons.library_books, size: 40),
             label: 'Settings',
           ),
         ],
+      ),
+      drawer: Drawer(
+        child: Scaffold(
+          backgroundColor: Color(0xFFFFC869),
+            body: ListView(
+              children: [
+                Container(
+                  height: 70,
+                  child: DrawerHeader(
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                      ),
+                    child: Text('MENU', textAlign: TextAlign.center, style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Color(
+                        0xFF571B00)),),
+                  ),
+                ),
+
+                ListTile(
+                  title: Text('Edit Profile'),
+                )
+              ],
+            )
+        ),
       ),
     );
   }
