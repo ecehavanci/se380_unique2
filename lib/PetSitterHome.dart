@@ -65,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String bio;
   String imagepath;
   String photoPathFirebase;
+  var fromCam;
   //Image imageFile;
 
 
