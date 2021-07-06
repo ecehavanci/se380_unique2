@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:se380_unique/PetSitterHome.dart';
+import 'package:se380_unique/sign.dart';
 import 'dart:io';
 
 import 'Edit_Profile.dart';
@@ -143,6 +144,16 @@ class _RatingsState extends State<Ratings> {
                 builder: (context) {
                   return NotificationLister(camera:widget.camera);
                 }));
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.exit_to_app),
+          title: Text('Exit'),
+          onTap: () async {
+            await Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) {
+              return SignUpChooser(camera:widget.camera);
+            }));
           },
         ),
 

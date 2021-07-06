@@ -1,15 +1,20 @@
 import 'dart:math';
 
+import 'package:camera_platform_interface/src/types/camera_description.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'dart:io';
+
+import 'camera.dart';
 
 class PetOwnerHomePage extends StatelessWidget {
   final String ID;
+  final CameraDescription camera;
 
-  const PetOwnerHomePage({Key key, this.ID}) : super(key: key);
+  const PetOwnerHomePage({Key key, this.ID,this.camera}) : super(key: key);
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -28,7 +33,7 @@ class PetOwnerHomePage extends StatelessWidget {
         primarySwatch: Colors.red,
         scaffoldBackgroundColor: Colors.orangeAccent,
       ),
-      home: PetOwner(title: 'My Profile', userID: ID ),
+      home: PetOwner(title: 'My Profile', userID: ID,camera:camera ),
     );
   }
 }
@@ -178,10 +183,11 @@ class _UserProfileState extends State<UserProfile> {
 
 
 class PetOwner extends StatefulWidget {
-  PetOwner({Key key, this.title, this.userID}) : super(key: key);
+  PetOwner({Key key, this.title, this.userID,this.camera}) : super(key: key);
 
   final String userID;
   final String title;
+  final CameraDescription camera;
 
 
   @override
@@ -202,6 +208,30 @@ class _PetOwnerState extends State<PetOwner> {
    String petOwnerName;
    String petOwnerSurname;
    List <String> breeds;
+
+  var fromCam;
+  var imagePath;
+  String photoPathFirebase;
+  DocumentReference doc;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+     doc= FirebaseFirestore.instance.collection("PetOwners").doc(widget.userID);
+  }
+
+  void getInfoFromFirebase() async{
+
+    DocumentSnapshot docOwners = await doc.get();
+    Map<String, dynamic> dataOwners=docOwners.data();
+
+    setState(() {
+      photoPathFirebase=dataOwners["photoPath"];
+
+    });
+
+  }
 
    void onItemTap(int index) {
      setState(() {
@@ -243,6 +273,7 @@ class _PetOwnerState extends State<PetOwner> {
 
   @override
   Widget build(BuildContext context) {
+    getInfoFromFirebase();
     return Scaffold(
       appBar: AppBar(
 
@@ -253,14 +284,49 @@ class _PetOwnerState extends State<PetOwner> {
           children: <Widget>[
             Expanded(
               flex:4,
-              child: ConstrainedBox(
-                constraints: BoxConstraints.expand(),
-                child: FlatButton(
-                  onPressed: null,
-                  padding: EdgeInsets.all(0.0),
-                  //child:Image.asset('')
-                )
-              )
+              child:Container(
+                child: Stack(
+                  children: [
+                    Container(
+                        width: 175,
+                        height: 175,
+                        color: Colors.cyan[200],
+                        margin: EdgeInsets.all(5),
+                        child:photoPathFirebase==null?Text("You don't have any image"):Container(
+                            height: 160,
+                            width: 160,
+                            child: Image.file(File(photoPathFirebase)))
+                    ),
+                    Positioned(
+                      right: 3,
+                      bottom: 30,
+                      child: SizedBox(
+                        height: 15,
+                        width: 75,
+                        child: IconButton(
+                          icon: const Icon(Icons.add_a_photo_outlined),
+                          color: Colors.blue,
+                          onPressed: () async {
+                            fromCam= await Navigator.of(context)
+                                .push(MaterialPageRoute(
+                                builder: (context) {
+                                  return TakePictureScreen(camera: widget.camera);
+                                }));
+                            setState(() {
+                              imagePath=fromCam;
+                            });
+                            if(imagePath.toString()!=''){
+                              doc.update({
+                                "photoPath": imagePath
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
             Expanded(
               child: SizedBox(

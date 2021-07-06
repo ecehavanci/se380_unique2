@@ -148,9 +148,12 @@ class _SignInAsPetSitterState extends State<SignInAsPetSitter> {
 }
 
 class SignInAsPetOwner extends StatefulWidget {
-  const SignInAsPetOwner({Key key, this.id}) : super(key: key);
+  const SignInAsPetOwner({Key key, this.id,this.camera}) : super(key: key);
 
   final String id;
+  final CameraDescription camera;
+
+
   @override
   _SignInAsPetOwnerState createState() => _SignInAsPetOwnerState(id);
 }
@@ -249,7 +252,7 @@ class _SignInAsPetOwnerState extends State<SignInAsPetOwner> {
                   print('ID: '+uc.user.uid);
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
-                        return PetOwnerHomePage(ID : uc.user.uid);
+                        return PetOwnerHomePage(ID : uc.user.uid,camera:widget.camera);
                       })
                   );
 
@@ -626,7 +629,7 @@ class _SignUpAsPetOwnerState extends State<SignUpAsPetOwner> {
 
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context){
-                        return SignInAsPetOwner(id: userID);
+                        return SignInAsPetOwner(id: userID,);
                       })
                   );
 
@@ -770,7 +773,7 @@ class SignInChooser extends StatelessWidget {
                         ),
                         onPressed: () { Navigator.of(context).push(MaterialPageRoute(
                             builder: (context){
-                              return SignInAsPetOwner(/*camera: firstCamera*/);
+                              return SignInAsPetOwner(camera: firstCamera);
                             })); },
                         child: Text('Sign in as pet owner', style: TextStyle(fontSize: 19),),
                       ),
