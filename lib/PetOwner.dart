@@ -625,8 +625,10 @@ class _PetOwnerState extends State<PetOwner> {
                                                                         TextButton(onPressed: () { Map<String, dynamic> petOwnerData = snap.data();
                                                                         var col = FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Request');
                                                                         print(petSitterDoc.id);
+
                                                                         col.add(
                                                                             {'Request maker\'s name': petOwnerData['name'].toString()+' '+petOwnerData['name'].toString(),
+                                                                              'Request maker\'s ID': widget.userID,
                                                                               'Request Letter':petOwnerData['name'].toString()+ ' ' + petOwnerData['surname'].toString()+' would like to hire you for '+ petDoc['Name'].toString()+ '.\n'
                                                                                 'It is a '+petDoc['Breed'].toString()+' and lives in '+petDoc['Living Area'].toString()+ '. Do you accept?'});
                                                                         Navigator.pop(context);
