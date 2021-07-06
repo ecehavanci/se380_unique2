@@ -40,27 +40,27 @@ final fiveStars = Container(
         Icon(
           Icons.star,
           color: Colors.red,
-          size: 35,
+          size: 20,
         ),
         Icon(
           Icons.star,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
         Icon(
           Icons.star,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
         Icon(
           Icons.star,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
         Icon(
           Icons.star,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
       ],
     ));
@@ -70,27 +70,27 @@ final fourStars = Container(
         Icon(
           Icons.star,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
         Icon(
           Icons.star,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
         Icon(
           Icons.star,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
         Icon(
           Icons.star,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
         Icon(
           Icons.star_outline,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
       ],
     ));
@@ -100,27 +100,27 @@ final threeStars = Container(
         Icon(
           Icons.star,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
         Icon(
           Icons.star,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
         Icon(
           Icons.star,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
         Icon(
           Icons.star_outline,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
         Icon(
           Icons.star_outline,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
       ],
     ));
@@ -130,27 +130,89 @@ final twoStars = Container(
         Icon(
           Icons.star,
           color: Colors.red,
-          size: 35,
+          size: 15,
         ),
         Icon(
           Icons.star,
           color: Colors.red,
-          size: 35,
-        ),
-        Icon(
-          Icons.star,
-          color: Colors.red,
-          size: 35,
-        ),
-        Icon(
-          Icons.star,
-          color: Colors.red,
-          size: 35,
+          size: 15,
         ),
         Icon(
           Icons.star_outline,
           color: Colors.red,
-          size: 35,
+          size: 15,
+        ),
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 15,
+        ),
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 15,
+        ),
+      ],
+    ));
+
+final oneStar = Container(
+    child: Row(
+      children: [
+        Icon(
+          Icons.star,
+          color: Colors.red,
+          size: 15,
+        ),
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 15,
+        ),
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 15,
+        ),
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 15,
+        ),
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 15,
+        ),
+      ],
+    ));
+
+final zeroStar = Container(
+    child: Row(
+      children: [
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 15,
+        ),
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 15,
+        ),
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 15,
+        ),
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 15,
+        ),
+        Icon(
+          Icons.star_outline,
+          color: Colors.red,
+          size: 15,
         ),
       ],
     ));
@@ -283,8 +345,10 @@ class _PetOwnerState extends State<PetOwner> {
                         }
                         else {
                           return
-                            Text( snapshot.data['name'].toString()+' '+snapshot.data['surname'].toString(), style: new TextStyle(fontSize: 25, color: const Color(
-                            0xFF86351C), fontWeight: FontWeight.bold));
+                            Flexible(
+                              child: Text( snapshot.data['name'].toString()+' '+snapshot.data['surname'].toString(), style: new TextStyle(fontSize: 25, color: const Color(
+                              0xFF86351C), fontWeight: FontWeight.bold)),
+                            );
                         }
                       }
                       )
@@ -313,8 +377,10 @@ class _PetOwnerState extends State<PetOwner> {
                           }
                           else {
                             return
-                              Text( snapshot.data['address'].toString(), style: new TextStyle(fontSize: 25, color: const Color(
-                                  0xFF86351C), fontWeight: FontWeight.bold));
+                              Flexible(
+                                child: Text( snapshot.data['address'].toString(), style: new TextStyle(fontSize: 25, color: const Color(
+                                    0xFF86351C), fontWeight: FontWeight.bold)),
+                              );
                           }
                         }
                     ),
@@ -440,7 +506,21 @@ class _PetOwnerState extends State<PetOwner> {
                                                                             color: Colors.yellow[100],
                                                                             child: ListTile(
                                                                               title: Text(doc['comment maker\'s name']),
-                                                                              subtitle: Text(doc['star'].toString()+'\n '+doc['comment']),
+                                                                              subtitle: Column(
+                                                                                  children: [
+                                                                                    doc['star']==1?oneStar
+                                                                                        :
+                                                                                    doc['star']==2?twoStars
+                                                                                        :
+                                                                                    doc['star']==3?threeStars
+                                                                                        :
+                                                                                    doc['star']==4?fourStars
+                                                                                        :
+                                                                                    doc['star']==5?fiveStars
+                                                                                        :
+                                                                                    zeroStar,
+                                                                                    Text(doc['comment'])
+                                                                                  ]),
                                                                             ),
 
                                                                           )
@@ -455,7 +535,7 @@ class _PetOwnerState extends State<PetOwner> {
                                                           child: Row(
                                                             children: [
                                                               Container(
-                                                                width: 20,
+                                                                width: 25,
                                                                 child: IconButton(
                                                                   onPressed: () {
                                                                     setState(() {
@@ -475,7 +555,7 @@ class _PetOwnerState extends State<PetOwner> {
                                                                 ),
                                                               ),
                                                               Container(
-                                                                width: 20,
+                                                                width: 25,
                                                                 child: IconButton(
                                                                   onPressed: () {
                                                                     setState(() {
@@ -495,7 +575,7 @@ class _PetOwnerState extends State<PetOwner> {
                                                                 ),
                                                               ),
                                                               Container(
-                                                                width: 20,
+                                                                width: 25,
                                                                 child: IconButton(
                                                                   onPressed: () {
                                                                     setState(() {
@@ -515,7 +595,7 @@ class _PetOwnerState extends State<PetOwner> {
                                                                 ),
                                                               ),
                                                               Container(
-                                                                width: 20,
+                                                                width: 25,
                                                                 child: IconButton(
                                                                   onPressed: () {
                                                                     setState(() {
@@ -535,7 +615,7 @@ class _PetOwnerState extends State<PetOwner> {
                                                                 ),
                                                               ),
                                                               Container(
-                                                                width: 20,
+                                                                width: 25,
                                                                 child: IconButton(
                                                                   onPressed: () {
                                                                     setState(() {
@@ -625,9 +705,8 @@ class _PetOwnerState extends State<PetOwner> {
                                                                         TextButton(onPressed: () { Map<String, dynamic> petOwnerData = snap.data();
                                                                         var col = FirebaseFirestore.instance.collection('PetSitters').doc(petSitterDoc.id).collection('Request');
                                                                         print(petSitterDoc.id);
-
                                                                         col.add(
-                                                                            {'Request maker\'s name': petOwnerData['name'].toString()+' '+petOwnerData['name'].toString(),
+                                                                            {'Request maker\'s name': petOwnerData['name'].toString()+' '+petOwnerData['surname'].toString(),
                                                                               'Request maker\'s ID': widget.userID,
                                                                               'Request Letter':petOwnerData['name'].toString()+ ' ' + petOwnerData['surname'].toString()+' would like to hire you for '+ petDoc['Name'].toString()+ '.\n'
                                                                                 'It is a '+petDoc['Breed'].toString()+' and lives in '+petDoc['Living Area'].toString()+ '. Do you accept?'});
@@ -701,8 +780,20 @@ class _PetOwnerState extends State<PetOwner> {
                   ),
                 ),
 
-                ListTile(
-                  title: Text('Edit Profile'),
+                Card(
+                  color: Color(0xFFFFEBBA),
+                  child: ListTile(
+                    title: Text('Edit Profile', style: TextStyle(fontSize: 20, color: Color(
+                        0xFF4E2811))),
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context)
+                          {
+                            return EditProfile(petOwnerID: widget.userID);
+                          }
+                      ));
+                    },
+                  ),
                 )
               ],
             )
@@ -1427,6 +1518,128 @@ class _EditPetState extends State<EditPet> {
     );
   }
 }
+
+
+class EditProfile extends StatefulWidget {
+  EditProfile({Key key, this.petOwnerID}) : super(key: key);
+
+  final String petOwnerID;
+
+  @override
+  _EditProfileState createState() => _EditProfileState();
+}
+
+class _EditProfileState extends State<EditProfile> {
+  final nameController = TextEditingController();
+  final surnameController = TextEditingController();
+  final addressController = TextEditingController();
+
+  String name;
+  String surname;
+  String address;
+
+  String careRoutine='';
+
+  AsyncSnapshot<DocumentSnapshot> snapshot;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Edit Profile'), backgroundColor: Color(
+          0xFFBD8E2F),),
+      backgroundColor: Color(0xFFFFE174),
+      body: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance.collection('PetOwners').doc(widget.petOwnerID).snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            if (!snapshot.hasData) {
+              return  Text('Loading...' , style: new TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold));
+            }
+            else {
+              return  Directionality(
+                textDirection: TextDirection.ltr,
+                child: ListView(
+                    children: [
+                      Container(
+                        alignment:Alignment.topLeft,
+                        child: Text('Name: ', style: TextStyle(fontSize: 30, color: Color(
+                            0xFF4E2811), fontWeight: FontWeight.bold,),),
+                      ),
+                      Form(
+
+                          child: TextField(
+                              controller: nameController,
+                              style: TextStyle(fontSize: 25),
+                              decoration: InputDecoration(
+                                  hintText: snapshot.data['name']
+                              )
+                          )
+                      ),
+
+                      Container(
+                        alignment:Alignment.topLeft,
+                        child: Text('Surname: ', style: TextStyle(fontSize: 30, color: Color(
+                            0xFF4E2811), fontWeight: FontWeight.bold,),),
+                      ),
+                      Form(
+
+                          child: TextField(
+                              controller: surnameController,
+                              style: TextStyle(fontSize: 25),
+                              decoration: InputDecoration(
+                                  hintText: snapshot.data['surname'].toString()
+                              )
+                          )
+                      ),
+
+                      Container(
+                        alignment:Alignment.topLeft,
+                        child: Text('Address: ', style: TextStyle(fontSize: 30, color: Color(
+                            0xFF4E2811), fontWeight: FontWeight.bold,),),
+                      ),
+                      Form(
+
+                          child: TextField(
+                              controller: addressController,
+                              style: TextStyle(fontSize: 25),
+                              decoration: InputDecoration(
+                                  hintText: snapshot.data['address']
+                              )
+                          )
+                      ),
+
+                    ]
+                ),
+              );
+
+            }
+          }
+      ),
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: Color(
+              0xFF845E09),
+          onPressed: () {
+            setState(() {
+              name=nameController.text;
+              surname=surnameController.text;
+              address=addressController.text;
+            });
+            var petOwner = FirebaseFirestore.instance.collection('PetOwners').doc(widget.petOwnerID);
+            if(name!=''){
+              petOwner.update(
+                  {'name':nameController.text});
+            }
+            if(surname!=''){
+              petOwner.update({'surname':surnameController.text});
+            }
+            if(address!=''){
+              petOwner.update({'address':addressController.text});
+            }
+            Navigator.pop(context);
+          },child: Icon(Icons.check,)),
+    );
+  }
+}
+
 
 
 
