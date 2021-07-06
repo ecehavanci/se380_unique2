@@ -86,6 +86,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     );
   }
 }
+
 /*
 class DisplayPictureScreen extends StatelessWidget {
   final String imagePath;
