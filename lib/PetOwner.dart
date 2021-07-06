@@ -219,6 +219,13 @@ class _PetOwnerState extends State<PetOwner> {
     // TODO: implement initState
     super.initState();
      doc= FirebaseFirestore.instance.collection("PetOwners").doc(widget.userID);
+    setState(() {
+      isOne=false;
+      isTwo=false;
+      isThree=false;
+      isFour=false;
+      isFive=false;
+    });
   }
 
   void getInfoFromFirebase() async{
@@ -256,20 +263,6 @@ class _PetOwnerState extends State<PetOwner> {
    }
 
    int starCount=0;
-
-   @override
-  void initState() {
-    setState(() {
-      isOne=false;
-      isTwo=false;
-      isThree=false;
-      isFour=false;
-      isFive=false;
-    });
-
-    // TODO: implement initState
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
