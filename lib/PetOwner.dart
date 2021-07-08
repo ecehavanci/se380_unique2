@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
+import 'sign.dart';
 
 import 'camera.dart';
 
@@ -21,19 +22,10 @@ class PetOwnerHomePage extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.red,
         scaffoldBackgroundColor: Colors.orangeAccent,
       ),
-      home: PetOwner(title: 'My Profile', userID: ID,camera:camera ),
+      home: PetOwner(userID: ID,camera:camera ),
     );
   }
 }
@@ -245,10 +237,9 @@ class _UserProfileState extends State<UserProfile> {
 
 
 class PetOwner extends StatefulWidget {
-  PetOwner({Key key, this.title, this.userID,this.camera}) : super(key: key);
+  PetOwner({Key key, this.userID,this.camera}) : super(key: key);
 
   final String userID;
-  final String title;
   final CameraDescription camera;
 
 
@@ -260,6 +251,10 @@ class _PetOwnerState extends State<PetOwner> {
   final commentController= TextEditingController();
    String petName;
    int selectedItemIndex=0;
+
+   String title='My Profile';
+   Color mainPageAppBar=Color(0xFF761D12);
+  Color mainPageBackground=Color(0xFFFFCD74);
 
   bool isOne=false;
   bool isTwo=false;
@@ -292,22 +287,22 @@ class _PetOwnerState extends State<PetOwner> {
    void onItemTap(int index) {
      setState(() {
        selectedItemIndex=index;
+       if(index==0){
+         title='My Profile';
+         mainPageBackground=Color(0xFFFFCD74);
+         mainPageAppBar= Color(0xFF761D12);
+       }
+       else if(index==1){
+         title='Pet Sitters';
+         mainPageBackground=Color(0xFF4CD1E8);
+         mainPageAppBar= Color(0xFF135078);
+       }
+       else {
+         title = 'Phone Numbers';
+         mainPageBackground=Color(0xFFC197EC);
+         mainPageAppBar= Color(0xFF764897);
+       }
      });
-
-
-     /*selectedItemIndex==1 && ModalRoute.of(context).settings.name!='LookForPetSitters'?Navigator.of(context).push(MaterialPageRoute(
-         builder: (context){
-           return LookForPetSitters();
-         }
-     ))
-         :
-     selectedItemIndex==2&&ModalRoute.of(context).settings.name!='ChanceWheel'?Navigator.of(context).push(MaterialPageRoute(
-         builder: (context){
-           return ChanceWheel();
-         }
-     ))
-         :
-     print('no action available');*/
 
    }
 
@@ -315,8 +310,6 @@ class _PetOwnerState extends State<PetOwner> {
 
    @override
   void initState() {
-
-     // TODO: implement initState
      super.initState();
     setState(() {
       isOne=false;
@@ -333,9 +326,10 @@ class _PetOwnerState extends State<PetOwner> {
   Widget build(BuildContext context) {
     getInfoFromFirebase();
     return Scaffold(
+      backgroundColor: this.mainPageBackground,
       appBar: AppBar(
-
-        title: Text(widget.title),
+        backgroundColor: this.mainPageAppBar,
+        title: Text(this.title),
       ),
       body: selectedItemIndex==0?Center(
         child: Column(
@@ -498,9 +492,8 @@ class _PetOwnerState extends State<PetOwner> {
           ],
         ),
       )
-          :
+          : selectedItemIndex==1?
       Container(
-      color: Colors.orangeAccent,
       child: Directionality(
           textDirection: TextDirection.rtl,
           child: StreamBuilder<QuerySnapshot>(
@@ -519,18 +512,36 @@ class _PetOwnerState extends State<PetOwner> {
                       children: petSitterSnapshot.data.docs.map((petSitterDoc) => TextButton(
                           onPressed: (){print('hello');},
                           child: Container(
-                            color: Colors.deepOrangeAccent,
+                            color: Colors.blueAccent,
                             child: Row(
                                 children: [
                                   SizedBox(
                                     width: 240,
                                     child: ListTile(
-                                        title: Text(petSitterDoc['name']+' '+petSitterDoc['surname']), subtitle: Text(petSitterDoc['address'])
+                                        title: Text(petSitterDoc['name']+' '+petSitterDoc['surname']),
+                                        subtitle: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            if(petSitterDoc['bio'] != null)Text( 'Bio: ' + petSitterDoc['bio'] ),
+
+                                            Text('Address: '+petSitterDoc['address']),
+
+                                            if(petSitterDoc['shifts'] != null)Text( 'Shifts: ' + petSitterDoc['shifts'].toString()),
+
+                                            if(petSitterDoc['days'] != null)Text( 'Available Days: ' + petSitterDoc['days'].join(", ").toString()),
+
+                                            if(petSitterDoc['price'] != null)Text( 'Price: ' + petSitterDoc['price'].toString()),
+                                          ],
+                                        )
                                     ),
                                   ),
                                   SizedBox(
                                     width: 80,
                                     child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        primary: Colors.indigo
+                                      ),
                                       child:Text('Details'),
                                       onPressed: (){
                                         showDialog(barrierDismissible: true,context: context, builder: (context){
@@ -803,7 +814,35 @@ class _PetOwnerState extends State<PetOwner> {
               }
           )
       ),
-      ),
+      ):
+
+
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('PetOwners').doc(widget.userID).collection('pet sitter phone').snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> phoneSnap) {
+            return!phoneSnap.hasData?
+               Container(child: CircularProgressIndicator(), alignment: Alignment.topCenter)
+                :
+                Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: ListView(
+                    children: phoneSnap.data.docs.map((doc) =>  Card(
+                      color:Color(0xFFFFC26A),
+                      child: ListTile(
+                        title: Text('Name'),
+                        subtitle: Text('phone: '+doc['pet sitter phone'].toString()),
+                      )
+                  )).toList())
+                );
+          },
+        )
+      )
+      ,
+
+
+
 
       bottomNavigationBar: BottomNavigationBar(
         onTap: onItemTap,
@@ -822,7 +861,7 @@ class _PetOwnerState extends State<PetOwner> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.library_books, size: 40),
-            label: 'Settings',
+            label: 'Phones',
           ),
         ],
       ),
@@ -852,6 +891,22 @@ class _PetOwnerState extends State<PetOwner> {
                           builder: (context)
                           {
                             return EditProfile(petOwnerID: widget.userID);
+                          }
+                      ));
+                    },
+                  ),
+                ),
+
+                Card(
+                  color: Color(0xFFFFEBBA),
+                  child: ListTile(
+                    title: Text('Sign out', style: TextStyle(fontSize: 20, color: Color(
+                        0xFF4E2811))),
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context)
+                          {
+                            return SignUpChooser();
                           }
                       ));
                     },
@@ -897,32 +952,6 @@ class _PetState extends State<Pet> {
   final speciesController= TextEditingController();
   final breedController=TextEditingController();
   final livingAreaController=TextEditingController();
-
-  /*Function careRoutineFunction= (bool batheChecked, bool combChecked, bool feedChecked, bool takeForAWalkChecked) => {
-    if (batheChecked) {
-    'bathe'
-  }
-  else if(combChecked && batheChecked){
-    'comb'
-  }
-  else if(combChecked && !batheChecked){
-    ', comb'
-  }
-  else if(feedChecked && (batheChecked || combChecked)){
-     'feed'
-  }
-  else if(feedChecked && !(batheChecked || combChecked)){
-     ', feed'
-  }
-  else if(takeForAWalkChecked && !(takeForAWalkChecked || combChecked || feedChecked)){
-    ', take for a walk'
-  }
-  else if(takeForAWalkChecked && (takeForAWalkChecked || combChecked || feedChecked)){
-    'take for a walk'
-  }
-  else {
-    'undef.'
-  }};*/
 
 
   @override
@@ -1281,7 +1310,8 @@ class _PetState extends State<Pet> {
           )
         ),
         floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
+          backgroundColor: Colors.indigo,
+            child: Icon(Icons.add,),
             onPressed: () async{
               final result = await Navigator.of(context).push(MaterialPageRoute(
                 builder: (context){
@@ -1435,8 +1465,7 @@ class _EditPetState extends State<EditPet> {
 
                   Container(
                     alignment:Alignment.topLeft,
-                    child: Text('Care Routine: ', style: TextStyle(fontSize: 30, color: const Color(
-                        0xFF002865), fontWeight: FontWeight.bold,),),
+                    child: Text('Care Routine: ', style: TextStyle(fontSize: 30, color: Colors.deepPurple, fontWeight: FontWeight.bold,),),
                   ),
 
                   Row(
@@ -1547,6 +1576,7 @@ class _EditPetState extends State<EditPet> {
           }
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.deepPurple,
           onPressed: () {
         setState(() {
           name=nameController.text;
