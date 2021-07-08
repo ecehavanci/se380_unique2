@@ -19,19 +19,24 @@ class Request extends StatefulWidget {
 }
 
 class _RequestState extends State<Request> {
+  var phone;
   int counter ;
   QuerySnapshot qsnap;
   var requestcol;
   var _usersStream;
   String reqmakerName;
+  String reqmakerID;
+  var phoneCol;
 
 
 @override
-  void initState() {
+  Future<void> initState()  {
     // TODO: implement initState
       requestcol=FirebaseFirestore.instance.collection('PetSitters').doc(widget.userID).collection("Request");
-     _usersStream = FirebaseFirestore.instance.collection("PetSitters").doc(widget.userID).collection("Request").snapshots();
+      _usersStream = FirebaseFirestore.instance.collection("PetSitters").doc(widget.userID).collection("Request").snapshots();
 
+
+  //change id
 
 }
 
@@ -104,7 +109,10 @@ class _RequestState extends State<Request> {
                                       counter=ssLength;
                                       counter = (counter - 1);
                                     });
+                                    getData();
                                     await FirebaseFirestore.instance.collection('PetSitters').doc(widget.userID).collection("Request").doc(document.id).delete();
+                                    FirebaseFirestore.instance.collection('PetOwners').doc(reqmakerID).collection("pet sitter phone").add(
+                                        {"pet sitter phone":phone});
 
                                     showDialog<String>(
                                       context: context,
@@ -238,7 +246,22 @@ class _RequestState extends State<Request> {
     DocumentSnapshot docrequest = await doc.get();
     Map<String, dynamic> datarequest=docrequest.data();
     setState(() {
+
       reqmakerName=datarequest["Request maker's name"];
+      reqmakerID=datarequest["Request maker's ID"];
+
     });
   }
+  Future<void> getData() async {
+    DocumentReference doc = FirebaseFirestore.instance.collection("PetSitters").doc(widget.userID);
+    DocumentSnapshot docSitters = await doc.get();
+    Map<String, dynamic> dataSitters = docSitters.data();
+    setState(() {
+      phone = dataSitters["phone"];
+    });
+  }
+
+
+
 }
+

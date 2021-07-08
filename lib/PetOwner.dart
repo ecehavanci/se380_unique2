@@ -276,12 +276,6 @@ class _PetOwnerState extends State<PetOwner> {
   String photoPathFirebase;
   DocumentReference doc;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-     doc= FirebaseFirestore.instance.collection("PetOwners").doc(widget.userID);
-  }
 
   void getInfoFromFirebase() async{
 
@@ -321,6 +315,9 @@ class _PetOwnerState extends State<PetOwner> {
 
    @override
   void initState() {
+
+     // TODO: implement initState
+     super.initState();
     setState(() {
       isOne=false;
       isTwo=false;
@@ -329,8 +326,7 @@ class _PetOwnerState extends State<PetOwner> {
       isFive=false;
     });
 
-    // TODO: implement initState
-    super.initState();
+     doc= FirebaseFirestore.instance.collection("PetOwners").doc(widget.userID);
   }
 
   @override
