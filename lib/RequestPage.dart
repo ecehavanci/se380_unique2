@@ -27,6 +27,7 @@ class _RequestState extends State<Request> {
   String reqmakerName;
   String reqmakerID;
   var phoneCol;
+  var nameSurname;
 
 
 @override
@@ -112,7 +113,8 @@ class _RequestState extends State<Request> {
                                     getData();
                                     await FirebaseFirestore.instance.collection('PetSitters').doc(widget.userID).collection("Request").doc(document.id).delete();
                                     FirebaseFirestore.instance.collection('PetOwners').doc(reqmakerID).collection("pet sitter phone").add(
-                                        {"pet sitter phone":phone});
+                                        {"pet sitter phone":phone,"pet sitter full name":nameSurname});
+                                    RequestMakergetData(document);
 
                                     showDialog<String>(
                                       context: context,
@@ -258,6 +260,8 @@ class _RequestState extends State<Request> {
     Map<String, dynamic> dataSitters = docSitters.data();
     setState(() {
       phone = dataSitters["phone"];
+      nameSurname=dataSitters["name"] +" "+ dataSitters["surname"];
+      print(nameSurname);
     });
   }
 
