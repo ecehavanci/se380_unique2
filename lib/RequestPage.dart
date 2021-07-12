@@ -24,9 +24,10 @@ class _RequestState extends State<Request> {
   QuerySnapshot qsnap;
   var requestcol;
   var _usersStream;
-  String reqmakerName;
+  String reqmakerName="";
   String reqmakerID;
   var phoneCol;
+  var nameSurname;
 
 
 @override
@@ -79,7 +80,7 @@ class _RequestState extends State<Request> {
               children: snapshot.data.docs.map((DocumentSnapshot document) {
                 Map<String, dynamic> data = document.data();
                 var ssLength=snapshot.data.docs.length;
-                RequestMakergetData(document);
+                //RequestMakergetData(document);
 
                 return new ListTile(
                   title: SingleChildScrollView(
@@ -112,13 +113,14 @@ class _RequestState extends State<Request> {
                                     getData();
                                     await FirebaseFirestore.instance.collection('PetSitters').doc(widget.userID).collection("Request").doc(document.id).delete();
                                     FirebaseFirestore.instance.collection('PetOwners').doc(reqmakerID).collection("pet sitter phone").add(
-                                        {"pet sitter phone":phone});
+                                        {"pet sitter phone":phone,"pet sitter full name":nameSurname});
+                                    RequestMakergetData(document);
 
                                     showDialog<String>(
                                       context: context,
                                       builder: (BuildContext context) => AlertDialog(
                                         title: const Text('Accept Information'),
-                                        content:  Text('Your phone number has been sent to '+reqmakerName),
+                                        content:  Text(reqmakerName==null?" ":'Your phone number has been sent to '+reqmakerName),
                                         actions: <Widget>[
                                           TextButton(
                                             onPressed: () => Navigator.pop(context, 'Cancel'),
@@ -247,7 +249,7 @@ class _RequestState extends State<Request> {
     Map<String, dynamic> datarequest=docrequest.data();
     setState(() {
 
-      reqmakerName=datarequest["Request maker's name"];
+      reqmakerName=datarequest['Request maker\'s name'];
       reqmakerID=datarequest["Request maker's ID"];
 
     });
@@ -258,6 +260,8 @@ class _RequestState extends State<Request> {
     Map<String, dynamic> dataSitters = docSitters.data();
     setState(() {
       phone = dataSitters["phone"];
+      nameSurname=dataSitters["name"] +" "+ dataSitters["surname"];
+      print(nameSurname);
     });
   }
 
