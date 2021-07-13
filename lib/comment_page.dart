@@ -81,7 +81,7 @@ class _RatingsState extends State<Ratings> {
             ),
             Expanded(
                 flex: 3,
-                child: UserInformation(ID:widget.ID)//CommentsList(names: names, stars: stars, comments: comments)
+                child: UserInformation(ID:widget.ID,avg_star:avg_star)//CommentsList(names: names, stars: stars, comments: comments)
             ),
             Column(),
             Row(),
@@ -230,7 +230,9 @@ class CommentsList extends StatelessWidget {
 class UserInformation extends StatefulWidget {
   var ID;
 
-  UserInformation({this.ID});
+  double avg_star;
+
+  UserInformation({this.ID, this.avg_star});
 
   @override
   _UserInformationState createState() => _UserInformationState();
@@ -266,10 +268,11 @@ class _UserInformationState extends State<UserInformation> {
               }
 
               return new ListView(
-
                 children: snapshot.data.docs.map((DocumentSnapshot document) {
                   Map<String, dynamic> data = document.data();
-                  return new ListTile(
+                 var ssLength=snapshot.data.docs.length;
+
+             return new ListTile(
 
                     title: SingleChildScrollView(
                       child: Container(
@@ -390,10 +393,11 @@ class _UserInformation2222State extends State<UserInformation2222> {
 }
 */
 class StarDisplay extends StatelessWidget {
-  StarDisplay(this.avg, this.size, {Key key}) : super(key: key);
-  final double avg;
+  StarDisplay(this.starNum, this.size, {Key key}) : super(key: key);
+  final double starNum;
 //size is always 35!
   final double size;
+  int avg=0;
 
   final fiveStars = Container(
       child: Row(
@@ -579,17 +583,17 @@ class StarDisplay extends StatelessWidget {
       ));
 
   displayStars() {
-    if (avg < 1)
+    if (starNum < 1)
       return zeroStar;
-    else if (avg == 1)
+    else if (starNum == 1)
       return oneStar;
-    else if (avg > 1 && avg <= 2)
+    else if (starNum > 1 && starNum <= 2)
       return twoStars;
-    else if (avg > 2 && avg <= 3)
+    else if (starNum > 2 && starNum <= 3)
       return threeStars;
-    else if (avg > 3 && avg <= 4)
+    else if (starNum > 3 && starNum <= 4)
       return fourStars;
-    else if (avg > 4 && avg <= 5) return fiveStars;
+    else if (starNum > 4 && starNum <= 5) return fiveStars;
   }
 
   @override

@@ -271,8 +271,10 @@ class _SignInAsPetOwnerState extends State<SignInAsPetOwner> {
   }
 }
 
+
 class SignUpAsPetSitter extends StatefulWidget {
-  const SignUpAsPetSitter({Key key}) : super(key: key);
+  const SignUpAsPetSitter({Key key,this.camera}) : super(key: key);
+  final CameraDescription camera;
 
   @override
   _SignUpAsPetSitterState createState() => _SignUpAsPetSitterState();
@@ -400,7 +402,7 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
                                 Text('Have an account? ', style: TextStyle( fontSize: 20)),
                                 TextButton(onPressed: () {Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context){
-                                      return SignInChooser();
+                                      return SignInChooser(camera: widget.camera);
                                     }));}, child: Text('Sign in', style: TextStyle(color: Colors.blue, fontSize: 20),))
                               ]
                           )
@@ -446,7 +448,7 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
 
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context){
-                      return SignInAsPetSitter(id: uc.user.uid);
+                      return SignInAsPetSitter(id: uc.user.uid,camera: widget.camera);
                     })
                 );
 
@@ -470,9 +472,11 @@ class _SignUpAsPetSitterState extends State<SignUpAsPetSitter> {
 
 
 class SignUpAsPetOwner extends StatefulWidget {
-  const SignUpAsPetOwner({Key key, this.ID}) : super(key: key);
+  const SignUpAsPetOwner({Key key, this.ID,this.camera}) : super(key: key);
 
   final String ID;
+  final CameraDescription camera;
+
   @override
   _SignUpAsPetOwnerState createState() => _SignUpAsPetOwnerState();
 }
@@ -583,7 +587,7 @@ class _SignUpAsPetOwnerState extends State<SignUpAsPetOwner> {
                                 Text('Have an account? ', style: TextStyle( fontSize: 20)),
                                 TextButton(onPressed: () {Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context){
-                                      return SignInChooser();
+                                      return SignInChooser(camera: widget.camera);
                                     }));}, child: Text('Sign in', style: TextStyle(color: Colors.blue, fontSize: 20),))
                               ]
                           )
@@ -629,7 +633,7 @@ class _SignUpAsPetOwnerState extends State<SignUpAsPetOwner> {
 
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context){
-                        return SignInAsPetOwner(id: userID,);
+                        return SignInAsPetOwner(id: userID,camera: widget.camera);
                       })
                   );
 
@@ -687,7 +691,7 @@ class SignUpChooser extends StatelessWidget {
                           ),
                           onPressed: () { Navigator.of(context).push(MaterialPageRoute(
                               builder: (context){
-                                return SignUpAsPetOwner();
+                                return SignUpAsPetOwner(camera:camera);
                               })); },
                           child: Text('Sign up as pet owner', style: TextStyle(fontSize: 19),),
                         ),
@@ -709,7 +713,7 @@ class SignUpChooser extends StatelessWidget {
                       ),
                       onPressed: () { Navigator.of(context).push(MaterialPageRoute(
                           builder: (context){
-                        return SignUpAsPetSitter();
+                        return SignUpAsPetSitter(camera:camera);
                       }));},
                         child: Text('Sign up as pet sitter', style: TextStyle(fontSize: 19),),
                         ),
