@@ -517,7 +517,7 @@ class _PetOwnerState extends State<PetOwner> {
                                 children: [
                                   SizedBox(
                                     width: 240,
-                                    child: ListTile(
+                                    child: petSitterDoc.exists? ListTile(
                                         title: Text(petSitterDoc['name']+' '+petSitterDoc['surname'], style: TextStyle(color: Colors.white)),
                                         subtitle: Column(
                                           mainAxisAlignment: MainAxisAlignment.start,
@@ -525,16 +525,16 @@ class _PetOwnerState extends State<PetOwner> {
                                           children: [
                                             if(petSitterDoc['bio'] != null)Text( 'Bio: ' + petSitterDoc['bio'], style: TextStyle(color: Colors.white70) ),
 
-                                            Text('Address: '+petSitterDoc['address'], style: TextStyle(color: Colors.white70)),
+                                            if(petSitterDoc['address'] != null)Text('Address: '+petSitterDoc['address'], style: TextStyle(color: Colors.white70)),
 
-                                            if(petSitterDoc['shifts'] != null)Text( 'Shifts: ' + petSitterDoc['shifts'].toString(), style: TextStyle(color: Colors.white70)),
+                                            if(petSitterSnapshot.data.docs.contains('shifts'))if(petSitterDoc['shifts'] != null)Text( 'Shifts: ' + petSitterDoc['shifts'].toString(), style: TextStyle(color: Colors.white70)),
 
                                             if(petSitterDoc['days'] != null)Text( 'Available Days: ' + petSitterDoc['days'].join(", ").toString(), style: TextStyle(color: Colors.white70)),
 
                                             if(petSitterDoc['price'] != null)Text( 'Price: ' + petSitterDoc['price'].toString(), style: TextStyle(color: Colors.white70)),
                                           ],
                                         )
-                                    ),
+                                    ): Container(),
                                   ),
                                   SizedBox(
                                     width: 80,
