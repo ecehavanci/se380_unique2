@@ -110,11 +110,12 @@ class _RequestState extends State<Request> {
                                       counter=ssLength;
                                       counter = (counter - 1);
                                     });
-                                    getData();
+
+                                    await RequestMakergetData(document);
+                                    await getData();
                                     await FirebaseFirestore.instance.collection('PetSitters').doc(widget.userID).collection("Request").doc(document.id).delete();
                                     FirebaseFirestore.instance.collection('PetOwners').doc(reqmakerID).collection("pet sitter phone").add(
                                         {"pet sitter phone":phone,"pet sitter full name":nameSurname});
-                                    RequestMakergetData(document);
 
                                     showDialog<String>(
                                       context: context,
@@ -249,10 +250,11 @@ class _RequestState extends State<Request> {
     Map<String, dynamic> datarequest=docrequest.data();
     setState(() {
 
-      reqmakerName=datarequest['Request maker\'s name'];
+      reqmakerName= datarequest["Request maker's name"];
       reqmakerID=datarequest["Request maker's ID"];
 
     });
+    print(reqmakerName);
   }
   Future<void> getData() async {
     DocumentReference doc = FirebaseFirestore.instance.collection("PetSitters").doc(widget.userID);
