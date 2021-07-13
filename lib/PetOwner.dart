@@ -518,20 +518,20 @@ class _PetOwnerState extends State<PetOwner> {
                                   SizedBox(
                                     width: 240,
                                     child: ListTile(
-                                        title: Text(petSitterDoc['name']+' '+petSitterDoc['surname']),
+                                        title: Text(petSitterDoc['name']+' '+petSitterDoc['surname'], style: TextStyle(color: Colors.white)),
                                         subtitle: Column(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            if(petSitterDoc['bio'] != null)Text( 'Bio: ' + petSitterDoc['bio'] ),
+                                            if(petSitterDoc['bio'] != null)Text( 'Bio: ' + petSitterDoc['bio'], style: TextStyle(color: Colors.white70) ),
 
-                                            Text('Address: '+petSitterDoc['address']),
+                                            Text('Address: '+petSitterDoc['address'], style: TextStyle(color: Colors.white70)),
 
-                                            if(petSitterDoc['shifts'] != null)Text( 'Shifts: ' + petSitterDoc['shifts'].toString()),
+                                            if(petSitterDoc['shifts'] != null)Text( 'Shifts: ' + petSitterDoc['shifts'].toString(), style: TextStyle(color: Colors.white70)),
 
-                                            if(petSitterDoc['days'] != null)Text( 'Available Days: ' + petSitterDoc['days'].join(", ").toString()),
+                                            if(petSitterDoc['days'] != null)Text( 'Available Days: ' + petSitterDoc['days'].join(", ").toString(), style: TextStyle(color: Colors.white70)),
 
-                                            if(petSitterDoc['price'] != null)Text( 'Price: ' + petSitterDoc['price'].toString()),
+                                            if(petSitterDoc['price'] != null)Text( 'Price: ' + petSitterDoc['price'].toString(), style: TextStyle(color: Colors.white70)),
                                           ],
                                         )
                                     ),
@@ -831,7 +831,7 @@ class _PetOwnerState extends State<PetOwner> {
                     children: phoneSnap.data.docs.map((doc) =>  Card(
                       color:Color(0xFFFFC26A),
                       child: ListTile(
-                        title: Text('Name'),
+                        title: Text(doc['pet sitter full name']),
                         subtitle: Text('phone: '+doc['pet sitter phone'].toString()),
                       )
                   )).toList())
@@ -861,7 +861,7 @@ class _PetOwnerState extends State<PetOwner> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.library_books, size: 40),
-            label: 'Phones',
+            label: 'Phone Book',
           ),
         ],
       ),
